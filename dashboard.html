@@ -378,6 +378,32 @@ details.desk-only{display:block!important;}
       </div>
     </div>
 
+    <!-- META ADS — HISTÓRICO -->
+    <div class="page-section" id="page-meta-hist">
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:3px">Meta Ads — Dados Históricos</div>
+        <div style="font-size:12px;color:var(--muted)">Análise mensal · todos os dados da conta</div>
+      </div>
+      <div class="krow k5 mb14" id="mHistKpis"></div>
+      <div class="cc mb14">
+        <div class="cc-t">Conversões · Investimento · CPL Mensal</div>
+        <div class="cc-s">Conversões (barras azuis) · Invest. (linha verde) · CPL (linha preta tracejada)</div>
+        <div class="cw" style="height:220px"><canvas id="chMHistMain"></canvas></div>
+      </div>
+      <div class="g2 mb14">
+        <div class="cc"><div class="cc-t">CPM Mensal (R$)</div><div class="cw" style="height:170px"><canvas id="chMHistCPM"></canvas></div></div>
+        <div class="cc"><div class="cc-t">CTR Mensal (%)</div><div class="cw" style="height:170px"><canvas id="chMHistCTR"></canvas></div></div>
+      </div>
+      <div class="g2 mb14">
+        <div class="cc"><div class="cc-t" style="margin-bottom:10px">🏆 Melhores Meses por CPL</div><div id="mHistRankCPL"></div></div>
+        <div class="cc"><div class="cc-t" style="margin-bottom:10px">📈 Maior Volume de Conversões</div><div id="mHistRankLeads"></div></div>
+      </div>
+      <div class="section">
+        <div class="sec-hd">Ranking de Campanhas — todos os meses</div>
+        <div class="tc" id="mHistCamps"></div>
+      </div>
+    </div>
+
     <!-- GOOGLE ADS — HISTÓRICO -->
     <div class="page-section" id="page-google-hist">
       <div style="margin-bottom:16px">
