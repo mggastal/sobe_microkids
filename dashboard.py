@@ -31,13 +31,13 @@ LANCAMENTO_COD   = ""        # filtra campanhas; "" = ver tudo
 USAR_PESQUISA    = False            # False = oculta aba Pesquisa
 
 # Metas do funil — define cores (verde/amarelo/vermelho)
-CPL_BOM          = 20.0    # Custo por Lead ≤ 5 → verde | 5-10 → amarelo | acima → vermelho
-CPL_MEDIO        = 30.0
+CPL_BOM          = 40.0    # Custo por Lead ≤ 5 → verde | 5-10 → amarelo | acima → vermelho
+CPL_MEDIO        = 45.0
 CTR_BOM          = 0.6    # CTR ≥ 1.2% → verde | 0.8-1.2% → amarelo | abaixo → vermelho
 CTR_MEDIO        = 0.4
-CR_BOM           = 15.0   # Connect Rate ≥ 40% → verde | 25-40% → amarelo | abaixo → vermelho
-CR_MEDIO         = 5.0
-TX_CONV_BOM      = 1.0   # Taxa Conversão (Lead/PV) ≥ 30% → verde | 15-30% → amarelo | abaixo → vermelho
+CR_BOM           = 68.0   # Connect Rate ≥ 40% → verde | 25-40% → amarelo | abaixo → vermelho
+CR_MEDIO         = 60.0
+TX_CONV_BOM      = 3.0   # Taxa Conversão (Lead/PV) ≥ 30% → verde | 15-30% → amarelo | abaixo → vermelho
 TX_CONV_MEDIO    = 2.0
 CPM_BOM          = 5.0    # CPM ≤ 5 → verde | 5-12 → amarelo | acima → vermelho (menor = melhor)
 CPM_MEDIO        = 12.0
