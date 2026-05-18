@@ -1495,7 +1495,7 @@ function renderGoogle(){
   // Conversões sempre inteiras
   const fConv=v=>v==null?'—':fN(Math.round(v));
   // Dólar — usado em todo o Google Ads
-  const fD=v=>(v==null||isNaN(v))?'—':'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fD=v=>(v==null||isNaN(v))?'—':'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
   // KPIs
   document.getElementById('gKpis').innerHTML=`
@@ -1514,13 +1514,13 @@ function renderGoogle(){
          datalabels:{...makeDatalabels('#ca8a04','',v=>v!=null?fN(v):null),display:ctx=>showLabels}},
         {label:'Invest.',data:gd.spend,borderColor:'#059669',backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:2,type:'line',spanGaps:true,datalabels:{display:false}},
         {label:'CPA',data:gd.cpa,borderColor:DARK()?'#fff':'#111',borderDash:[5,3],backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:1.5,type:'line',yAxisID:'y2',spanGaps:true,
-         datalabels:{display:ctx=>showLabels,color:DARK()?'#fff':'#111',font:{size:labelSize,weight:'bold'},formatter:v=>v!=null?'$'+v.toFixed(2):null,anchor:'end',align:'top',offset:2,clip:false}},
+         datalabels:{display:ctx=>showLabels,color:DARK()?'#fff':'#111',font:{size:labelSize,weight:'bold'},formatter:v=>v!=null?'R$'+v.toFixed(2):null,anchor:'end',align:'top',offset:2,clip:false}},
       ]},
       options:{...bo(),scales:{
         x:{ticks:{color:TXT(),font:bf,maxTicksLimit:14},grid:{color:GRID()}},
-        y:{ticks:{color:TXT(),font:bf,callback:v=>'$'+v.toLocaleString('en-US')},grid:{color:GRID()},min:0},
+        y:{ticks:{color:TXT(),font:bf,callback:v=>'R$'+v.toLocaleString('pt-BR')},grid:{color:GRID()},min:0},
         y1:{position:'right',ticks:{color:'#ca8a04',font:bf},grid:{display:false},grace:'20%'},
-        y2:{position:'right',ticks:{color:'#555',font:bf,callback:v=>'$'+v.toFixed(0)},grid:{display:false},offset:true,min:0},
+        y2:{position:'right',ticks:{color:'#555',font:bf,callback:v=>'R$'+v.toFixed(0)},grid:{display:false},offset:true,min:0},
       }}
     });
   }
@@ -1623,7 +1623,7 @@ function toggleGCamp(cid, camp){
   sub.style.display=open?'table-row':'none';
   if(arr) arr.textContent=open?'▼':'▶';
   if(!open) return;
-  const fD=v=>(v==null||isNaN(v))?'—':'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fD=v=>(v==null||isNaN(v))?'—':'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const fConv=v=>v==null?'—':fN(Math.round(v));
   const cpaCls=v=>!v?'cn':v<=10?'cg':v<=30?'cw2':'cr';
   const MATCH_ICON={'EXACT':'[E]','PHRASE':'"F"','BROAD':'~A~'};
@@ -1782,7 +1782,7 @@ function renderMetaHist(){
 function renderGoogleHist(){
   if(!GOOGLE_MONTHLY) return;
   const {lbl,totalS,totalConv,cpaG,cpcG,ctrG}=GOOGLE_MONTHLY;
-  const fD=v=>(v==null||isNaN(v))?'—':'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fD=v=>(v==null||isNaN(v))?'—':'R$'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const cpaCls=v=>!v?'cn':v<=10?'cg':v<=30?'cw2':'cr';
   const fConv=v=>v==null?'—':fN(Math.round(v));
   const tS=totalS.reduce((a,b)=>a+b,0), tC=totalConv.reduce((a,b)=>a+b,0);
@@ -1801,20 +1801,20 @@ function renderGoogleHist(){
       {label:'Conversões',data:totalConv.map(v=>Math.round(v)),backgroundColor:'rgba(234,179,8,.75)',borderRadius:4,type:'bar',datalabels:{display:false}},
       {label:'Invest.',data:totalS,borderColor:'#059669',backgroundColor:'transparent',tension:.35,pointRadius:4,borderWidth:2,type:'line',yAxisID:'y1',spanGaps:false,datalabels:{display:false}},
       {label:'CPA',data:cpaG,borderColor:DARK()?'#e5e7eb':'#111827',borderDash:[5,3],backgroundColor:'transparent',pointRadius:3,borderWidth:1.5,tension:.35,type:'line',yAxisID:'y2',spanGaps:false,
-       datalabels:{display:showLabels,font:{size:labelSize,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'$'+v.toFixed(1):null,color:DARK()?'#f9fafb':'#111827',clip:false}},
+       datalabels:{display:showLabels,font:{size:labelSize,weight:'bold'},anchor:'end',align:'bottom',offset:2,formatter:v=>v!=null?'R$'+v.toFixed(1):null,color:DARK()?'#f9fafb':'#111827',clip:false}},
     ]},
     options:{...bo(),scales:{
       x:{ticks:{color:TXT(),font:bf},grid:{color:GRID()}},
       y:{ticks:{color:TXT(),font:bf},grid:{color:GRID()}},
-      y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'$'+v.toLocaleString('en-US')},grid:{display:false}},
-      y2:{position:'right',ticks:{color:DARK()?'#9ca3af':'#374151',font:bf,callback:v=>'$'+v.toFixed(1)},grid:{display:false},offset:true},
+      y1:{position:'right',ticks:{color:'#059669',font:bf,callback:v=>'R$'+v.toLocaleString('pt-BR')},grid:{display:false}},
+      y2:{position:'right',ticks:{color:DARK()?'#9ca3af':'#374151',font:bf,callback:v=>'R$'+v.toFixed(1)},grid:{display:false},offset:true},
     }}
   });
 
   dc('chGHistCPC');
   CH['chGHistCPC']=new Chart(document.getElementById('chGHistCPC'),{type:'line',
     data:{labels:lbl,datasets:[{label:'CPC',data:cpcG,borderColor:'#ea4335',backgroundColor:'rgba(234,67,53,.08)',fill:true,tension:.35,pointRadius:4,borderWidth:2,datalabels:{display:false}}]},
-    options:{...bo(),scales:{x:{ticks:{color:TXT(),font:bf},grid:{color:GRID()}},y:{ticks:{color:TXT(),font:bf,callback:v=>'$'+v.toFixed(2)},grid:{color:GRID()},min:0}}}
+    options:{...bo(),scales:{x:{ticks:{color:TXT(),font:bf},grid:{color:GRID()}},y:{ticks:{color:TXT(),font:bf,callback:v=>'R$'+v.toFixed(2)},grid:{color:GRID()},min:0}}}
   });
 
   dc('chGHistCTR');
