@@ -764,19 +764,19 @@ function calcTableFromRaw(){
   const adsetMap={};
   filtered.forEach(r=>{
     const ck=r.c;
-    if(!campMap[ck]) campMap[ck]={n:r.c,spend:0,imp:0,lc:0,pv:0,ld:0};
+    if(!campMap[ck]) campMap[ck]={n:r.c,spend:0,imp:0,lc:0,cl:0,pv:0,ld:0};
     campMap[ck].spend+=r.sp; campMap[ck].imp+=r.imp; campMap[ck].lc+=r.lc;
     campMap[ck].pv+=r.pv; campMap[ck].ld+=r.ld;
     const ak=r.c+'|||'+r.a;
-    if(!adsetMap[ak]) adsetMap[ak]={n:r.a,camp:r.c,spend:0,imp:0,lc:0,pv:0,ld:0};
+    if(!adsetMap[ak]) adsetMap[ak]={n:r.a,camp:r.c,spend:0,imp:0,lc:0,cl:0,pv:0,ld:0};
     adsetMap[ak].spend+=r.sp; adsetMap[ak].imp+=r.imp; adsetMap[ak].lc+=r.lc;
     adsetMap[ak].pv+=r.pv; adsetMap[ak].ld+=r.ld;
   });
 
   function calcRow(o){
-    const sp=r2(o.spend),ld=o.ld,imp=o.imp,lc=o.lc,pv=o.pv;
-    return {...o, spend:sp, ld, imp, lc, pv,
-      ctr:imp>0?r2(lc/imp*100):null, cr:lc>0?r2(pv/lc*100):null,
+    const sp=r2(o.spend),ld=o.ld,imp=o.imp,lc=o.lc,cl=o.cl||o.lc,pv=o.pv;
+    return {...o, spend:sp, ld, imp, lc, cl, pv,
+      ctr:imp>0?r2(lc/imp*100):null, ctr_all:imp>0?r2(cl/imp*100):null, cr:lc>0?r2(pv/lc*100):null,
       tx_cv:pv>0?r2(ld/pv*100):null,
       cpl:ld>0?r2(sp/ld):null, cpm:imp>0?r2(sp/imp*1000):null};
   }
@@ -903,7 +903,8 @@ function buildTable(elId,data,mainCol){
     {k:'spend',l:'Invest.',f:fR},
     {k:'imp',l:'Impr.',cls:'cn'},{k:'lc',l:'Cliques',cls:'cn'},{k:'pv',l:'PV',cls:'cn'},
     {k:'ld',l:'Leads',f:fN},
-    {k:'ctr',l:'CTR',f:fP,cls2:v=>funnelCls(v,CTR_BOM,CTR_MEDIO).cls},
+    {k:'ctr',l:'CTR Link',f:fP,cls2:v=>funnelCls(v,CTR_BOM,CTR_MEDIO).cls},
+    {k:'ctr_all',l:'CTR Total',f:fP,cls2:v=>funnelCls(v,CTR_BOM,CTR_MEDIO).cls},
     {k:'cr',l:'C.Rate',f:fP,cls2:v=>funnelCls(v,CR_BOM,CR_MEDIO).cls},
     {k:'tx_cv',l:'Tx.Conv',f:fP,cls2:v=>funnelCls(v,TX_CONV_BOM,TX_CONV_MEDIO).cls},
     {k:'cpl',l:'CPL',f:fR,cls2:cplCls},
@@ -945,9 +946,10 @@ function buildTable(elId,data,mainCol){
         <td></td>
         <td style="font-size:10px;padding:6px 10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px">Total</td>
         ${(()=>{
-          const tot={spend:0,imp:0,lc:0,pv:0,ld:0};
-          data.forEach(r=>{tot.spend+=r.spend||0;tot.imp+=r.imp||0;tot.lc+=r.lc||0;tot.pv+=r.pv||0;tot.ld+=r.ld||0;});
+          const tot={spend:0,imp:0,lc:0,cl:0,pv:0,ld:0};
+          data.forEach(r=>{tot.spend+=r.spend||0;tot.imp+=r.imp||0;tot.lc+=r.lc||0;tot.cl+=r.cl||0;tot.pv+=r.pv||0;tot.ld+=r.ld||0;});
           const ctr=tot.imp>0?r2(tot.lc/tot.imp*100):null;
+          const ctr_all=tot.imp>0?r2(tot.cl/tot.imp*100):null;
           const cr=tot.lc>0?r2(tot.pv/tot.lc*100):null;
           const txcv=tot.pv>0?r2(tot.ld/tot.pv*100):null;
           const cpl=tot.ld>0?r2(tot.spend/tot.ld):null;
@@ -958,6 +960,7 @@ function buildTable(elId,data,mainCol){
             '<td class="num" style="padding:8px 10px;color:var(--muted2)">'+fN(tot.pv)+'</td>'+
             '<td class="num" style="padding:8px 10px;font-weight:700">'+fN(tot.ld)+'</td>'+
             '<td class="num '+funnelCls(ctr,CTR_BOM,CTR_MEDIO).cls+'" style="padding:8px 10px">'+fP(ctr)+'</td>'+
+            '<td class="num '+funnelCls(ctr_all,CTR_BOM,CTR_MEDIO).cls+'" style="padding:8px 10px">'+fP(ctr_all)+'</td>'+
             '<td class="num '+funnelCls(cr,CR_BOM,CR_MEDIO).cls+'" style="padding:8px 10px">'+fP(cr)+'</td>'+
             '<td class="num '+funnelCls(txcv,TX_CONV_BOM,TX_CONV_MEDIO).cls+'" style="padding:8px 10px">'+fP(txcv)+'</td>'+
             '<td class="num '+cplCls(cpl)+'" style="padding:8px 10px">'+fR(cpl)+'</td>'+
@@ -986,7 +989,8 @@ function toggleCampRow(id,rowEl){
       '<th style="font-size:9px;padding:4px 8px;text-align:left;color:var(--muted2)">Conjunto</th>'+
       '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Invest.</th>'+
       '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Leads</th>'+
-      '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR</th>'+
+      '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR Link</th>'+
+      '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR Total</th>'+'
       '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">C.Rate</th>'+
       '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Tx.Conv</th>'+
       '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CPL</th>'+
@@ -996,6 +1000,7 @@ function toggleCampRow(id,rowEl){
         <td class="num" style="font-size:10px;padding:5px 8px">${fR(a.spend)}</td>
         <td class="num" style="font-size:10px;padding:5px 8px">${fN(a.ld)}</td>
         <td class="num ${funnelCls(a.ctr,CTR_BOM,CTR_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(a.ctr)}</td>
+        <td class="num ${funnelCls(a.ctr_all,CTR_BOM,CTR_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(a.ctr_all)}</td>
         <td class="num ${funnelCls(a.cr,CR_BOM,CR_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(a.cr)}</td>
         <td class="num ${funnelCls(a.tx_cv,TX_CONV_BOM,TX_CONV_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(a.tx_cv)}</td>
         <td class="num ${cplCls(a.cpl)}" style="font-size:10px;padding:5px 8px">${fR(a.cpl)}</td>
@@ -1030,7 +1035,8 @@ function toggleAdsetRow(campId,adsetName,campName,rowEl){
         '<th style="font-size:9px;padding:4px 8px;text-align:left;color:var(--muted2)">Criativo</th>'+
         '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Invest.</th>'+
         '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Leads</th>'+
-        '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR</th>'+
+        '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR Link</th>'+
+        '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CTR Total</th>'+'
         '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">C.Rate</th>'+
         '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">Tx.Conv</th>'+
         '<th class="num" style="font-size:9px;padding:4px 8px;color:var(--muted2)">CPL</th>'+
@@ -1040,6 +1046,7 @@ function toggleAdsetRow(campId,adsetName,campName,rowEl){
           <td class="num" style="font-size:10px;padding:5px 8px">${fR(ad.spend)}</td>
           <td class="num" style="font-size:10px;padding:5px 8px">${fN(ad.ld)}</td>
           <td class="num ${funnelCls(ad.ctr,CTR_BOM,CTR_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(ad.ctr)}</td>
+          <td class="num ${funnelCls(ad.ctr_all,CTR_BOM,CTR_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(ad.ctr_all)}</td>
           <td class="num" style="font-size:10px;padding:5px 8px;color:var(--muted2)">${fP(ad.cr||null)}</td>
           <td class="num ${funnelCls(ad.tx_cv,TX_CONV_BOM,TX_CONV_MEDIO).cls}" style="font-size:10px;padding:5px 8px">${fP(ad.tx_cv||null)}</td>
           <td class="num ${cplCls(ad.cpl)}" style="font-size:10px;padding:5px 8px">${fR(ad.cpl)}</td>
@@ -1057,7 +1064,8 @@ function toggleAdsetRow(campId,adsetName,campName,rowEl){
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
                 <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">Leads</div><div style="font-size:10px;font-weight:700;font-family:monospace">${fN(ad.ld)}</div></div>
                 <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">CPL</div><div class="${cplCls(ad.cpl)}" style="font-size:10px;font-weight:700;font-family:monospace">${fR(ad.cpl)}</div></div>
-                <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">CTR</div><div style="font-size:10px;font-weight:700;font-family:monospace">${fP(ad.ctr)}</div></div>
+                <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">CTR Link</div><div style="font-size:10px;font-weight:700;font-family:monospace">${fP(ad.ctr)}</div></div>
+                <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">CTR Total</div><div style="font-size:10px;font-weight:700;font-family:monospace">${fP(ad.ctr_all)}</div></div>
                 <div><div style="font-size:7px;color:var(--muted2);text-transform:uppercase">Invest.</div><div style="font-size:10px;font-weight:700;font-family:monospace">${fR(ad.spend)}</div></div>
               </div>
             </div>
@@ -1079,7 +1087,8 @@ function renderAds(ads){
         <div class="ad-stats">
           <div><div class="as-l">Leads</div><div class="as-v">${fN(ad.ld)}</div></div>
           <div><div class="as-l">CPL</div><div class="as-v ${cplCls(ad.cpl)}">${fR(ad.cpl)}</div></div>
-          <div><div class="as-l">CTR</div><div class="as-v">${fP(ad.ctr)}</div></div>
+          <div><div class="as-l">CTR Link</div><div class="as-v">${fP(ad.ctr)}</div></div>
+          <div><div class="as-l">CTR Total</div><div class="as-v">${fP(ad.ctr_all)}</div></div>
           <div><div class="as-l">Invest.</div><div class="as-v">${fR(ad.spend)}</div></div>
         </div>
       </div></div>`;
