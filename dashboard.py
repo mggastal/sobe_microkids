@@ -27,8 +27,8 @@ NOME_CLIENTE     = "Microkids"
 LOGO_LETRA       = "MK"
 COR_ACENTO       = "#AD96DC"
 
-LANCAMENTO_COD   = "RDC01"        # filtra campanhas; "" = ver tudo
-USAR_PESQUISA    = True            # False = oculta aba Pesquisa
+LANCAMENTO_COD   = ""        # filtra campanhas; "" = ver tudo
+USAR_PESQUISA    = False            # False = oculta aba Pesquisa
 
 # Metas do funil — define cores (verde/amarelo/vermelho)
 CPL_BOM          = 40.0
@@ -638,14 +638,12 @@ def inject_all(tpl, meta_k, meta_d, meta_dc, meta_raw_c, meta_t, meta_bd, meta_m
     html=replace_js_const(html,"GOOGLE_BD",      g_bd)
     html=replace_js_const(html,"GOOGLE_MONTHLY", g_month)
     html=replace_js_const(html,"GOOGLE_RAW",     g_raw)
-CPL_BOM          = 40.0
-CPL_MEDIO        = 45.0
     for k,v in [("LANCAMENTO_COD",f"'{LANCAMENTO_COD}'"),("NOME_CLIENTE",f"'{NOME_CLIENTE}'"),
                 ("LOGO_LETRA",f"'{LOGO_LETRA}'"),("COR_ACENTO",f"'{COR_ACENTO}'"),
-CPL_MEDIO        = 45.0
-CTR_MEDIO        = 0.4
-CR_MEDIO         = 60.0
-TX_CONV_MEDIO    = 2.0
+                ("CPL_BOM",str(CPL_BOM)),("CPL_MEDIO",str(CPL_MEDIO)),
+                ("CTR_BOM",str(CTR_BOM)),("CTR_MEDIO",str(CTR_MEDIO)),
+                ("CR_BOM",str(CR_BOM)),("CR_MEDIO",str(CR_MEDIO)),
+                ("TX_CONV_BOM",str(TX_CONV_BOM)),("TX_CONV_MEDIO",str(TX_CONV_MEDIO)),
                 ("CPM_BOM",str(CPM_BOM)),("CPM_MEDIO",str(CPM_MEDIO))]:
         html=re.sub(rf"const {k}\s*=\s*[^;]+;",f"const {k}={v};",html,count=1)
     html=re.sub(r"\d{2}/\d{2}/\d{4} · via planilha",date.today().strftime("%d/%m/%Y")+" · via planilha",html)
