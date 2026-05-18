@@ -323,9 +323,10 @@ def meta_breakdowns(df):
     return result
 
 # ══ GOOGLE ADS ════════════════════════════════════════
-URL_GOOGLE   = sheet_url("google-ads")
-URL_GOOGLE_GE= sheet_url("google-breakdown-gender")
-URL_GOOGLE_AG= sheet_url("google-breakdown-age")
+URL_GOOGLE       = sheet_url("google-ads")
+URL_GOOGLE_OUTROS= sheet_url("google-ads-outros")
+URL_GOOGLE_GE    = sheet_url("google-breakdown-gender")
+URL_GOOGLE_AG    = sheet_url("google-breakdown-age")
 
 AGE_MAP = {"AGE_RANGE_18_24":"18-24","AGE_RANGE_25_34":"25-34","AGE_RANGE_35_44":"35-44",
            "AGE_RANGE_45_54":"45-54","AGE_RANGE_55_64":"55-64","AGE_RANGE_65_UP":"65+"}
@@ -342,8 +343,33 @@ def load_google():
     df["adgroup"]=df["Ad Group Name"]
     df["keyword"]=df["Keyword (Ad Group Criterion)"]
     df["match_type"]=df["Match Type (Segment)"]
+    df["is_search"]=True  # campanhas search têm keywords
     df=df.dropna(subset=["date"])
-    print(f"     {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
+    print(f"     Search: {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
+
+    # Carregar outros tipos (Display, PMax, etc.)
+    try:
+        df2=pd.read_csv(URL_GOOGLE_OUTROS)
+        df2["date"]=pd.to_datetime(df2["Date (Segment)"],errors="coerce")
+        df2["spend"]=to_num(df2["Cost (Spend, Amount Spent)"])
+        df2["conversions"]=to_num(df2["All Conversions"])
+        df2["clicks"]=to_num(df2["Clicks"])
+        df2["impressions"]=to_num(df2["Impressions"])
+        df2["campaign"]=df2["Campaign Name"]
+        df2["adgroup"]=df2["Ad Group Name"]
+        df2["keyword"]=""  # sem keyword
+        df2["match_type"]=""
+        df2["channel_type"]=df2["Advertising Channel Type"] if "Advertising Channel Type" in df2.columns else "Outros"
+        df2["is_search"]=False
+        df2=df2.dropna(subset=["date"])
+        print(f"     Outros (Display/PMax/etc): {len(df2)} linhas | campanhas: {df2['campaign'].nunique()}")
+        # Unificar — só as colunas comuns
+        cols=["date","campaign","adgroup","keyword","match_type","spend","conversions","clicks","impressions","is_search"]
+        df=pd.concat([df[cols], df2[cols]], ignore_index=True)
+    except Exception as e:
+        print(f"     Aviso google-ads-outros: {e}")
+
+    print(f"     Total unificado: {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
     return df
 
 def google_daily(df):
@@ -422,6 +448,8 @@ def google_camps(df):
     return result
 
 def google_keywords(df):
+    # Apenas campanhas search têm keywords
+    df_search=df[df["is_search"]==True] if "is_search" in df.columns else df
     hoje=pd.Timestamp(date.today()); ontem=hoje-pd.Timedelta(days=1)
     def kws_period(p):
         ag=p.groupby("keyword").agg(spend=("spend","sum"),conversions=("conversions","sum"),
@@ -440,15 +468,17 @@ def google_keywords(df):
                 "clicks":cl,"imp":imp})
         return rows
     result={}
-    result["1"]=kws_period(df[(df["date"]>=ontem)&(df["date"]<=ontem)])
-    for n in [7,14,30]: result[str(n)]=kws_period(df[df["date"]>=hoje-pd.Timedelta(days=n-1)])
-    result["all"]=kws_period(df)
+    result["1"]=kws_period(df_search[(df_search["date"]>=ontem)&(df_search["date"]<=ontem)])
+    for n in [7,14,30]: result[str(n)]=kws_period(df_search[df_search["date"]>=hoje-pd.Timedelta(days=n-1)])
+    result["all"]=kws_period(df_search)
     return result
 
 def google_raw(df):
-    """Raw diário por campanha/adgroup/keyword — usado para filtros de data livre no HTML."""
+    """Raw diário — search com keywords, outros sem. Usado para filtros de data livre no HTML."""
     rows=[]
-    agg=df.groupby(["date","campaign","adgroup","keyword","match_type"]).agg(
+    # Search: com keyword
+    df_search=df[df["is_search"]==True] if "is_search" in df.columns else df
+    agg=df_search.groupby(["date","campaign","adgroup","keyword","match_type"]).agg(
         spend=("spend","sum"),conversions=("conversions","sum"),
         clicks=("clicks","sum"),impressions=("impressions","sum")
     ).reset_index()
@@ -461,6 +491,22 @@ def google_raw(df):
             "cv": round(float(r["conversions"]),2),
             "cl": int(r["clicks"]), "imp": int(r["impressions"])
         })
+    # Adicionar campanhas não-search (Display/PMax/etc) sem keyword
+    df_outros=df[df["is_search"]==False] if "is_search" in df.columns else pd.DataFrame()
+    if len(df_outros)>0:
+        agg2=df_outros.groupby(["date","campaign","adgroup"]).agg(
+            spend=("spend","sum"),conversions=("conversions","sum"),
+            clicks=("clicks","sum"),impressions=("impressions","sum")
+        ).reset_index()
+        for _,r in agg2.iterrows():
+            rows.append({
+                "d": r["date"].strftime("%d/%m"),
+                "c": str(r["campaign"]), "a": str(r["adgroup"]),
+                "kw": "", "mt": "",
+                "sp": round(float(r["spend"]),2),
+                "cv": round(float(r["conversions"]),2),
+                "cl": int(r["clicks"]), "imp": int(r["impressions"])
+            })
     return rows
 
 def google_breakdowns(df):
