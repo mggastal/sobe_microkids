@@ -92,10 +92,12 @@ def load_meta():
         "Impressions":"impressions",
         "Action Link Clicks":"link_clicks",
         "Action Landing Page View":"page_view",
+        "Clicks":"clicks",
     })
     df["date"]=pd.to_datetime(df["date"],errors="coerce")
-    for c in ["spend","impressions","link_clicks","page_view"]:
+    for c in ["spend","impressions","link_clicks","page_view","clicks"]:
         if c in df.columns: df[c]=to_num(df[c])
+    if "clicks" not in df.columns: df["clicks"]=df["link_clicks"]  # fallback
     # Somar todas as colunas de conversão disponíveis
     df["leads"] = sum(to_num(df[c]) for c in CONV_COLS if c in df.columns)
     print(f"     Conversões somadas: {', '.join(c for c in CONV_COLS if c in df.columns)}")
@@ -109,10 +111,12 @@ def calc_kpis(p):
     sp=float(p["spend"].sum()); imp=float(p["impressions"].sum())
     lc=float(p["link_clicks"].sum()); pv=float(p["page_view"].sum())
     ld=float(p["leads"].sum())
+    cl=float(p["clicks"].sum()) if "clicks" in p.columns else lc
     return {
         "spend":round(sp,2),"impressions":int(imp),"link_clicks":int(lc),
-        "page_view":int(pv),"leads":int(ld),
+        "clicks":int(cl),"page_view":int(pv),"leads":int(ld),
         "ctr":   round(lc/imp*100,2) if imp>0 else None,
+        "ctr_all":round(cl/imp*100,2) if imp>0 else None,
         "connect_rate":round(pv/lc*100,2) if lc>0 else None,
         "tx_conv":round(ld/pv*100,2) if pv>0 else None,
         "cpl":   round(sp/ld,2) if ld>0 else None,
@@ -126,21 +130,26 @@ def build_daily(p):
     # Coluna de engajamento — usa Action Post Engagement se disponível
     ENG_COL = "Action Post Engagement"
     has_eng = ENG_COL in p.columns
+    has_clicks = "clicks" in p.columns
     agg_cols = dict(spend=("spend","sum"),impressions=("impressions","sum"),
         link_clicks=("link_clicks","sum"),page_view=("page_view","sum"),leads=("leads","sum"))
     if has_eng: agg_cols["engagement"] = (ENG_COL,"sum")
+    if has_clicks: agg_cols["clicks"] = ("clicks","sum")
     agg=p.groupby("date").agg(**agg_cols).reset_index().sort_values("date")
-    out={k:[] for k in ["days","spend","impressions","link_clicks","page_view","leads",
-                         "ctr","connect_rate","tx_conv","cpl","cpm","engagement","cpe"]}
+    out={k:[] for k in ["days","spend","impressions","link_clicks","clicks","page_view","leads",
+                         "ctr","ctr_all","connect_rate","tx_conv","cpl","cpm","engagement","cpe"]}
     for _,r in agg.iterrows():
         sp=float(r["spend"]); imp=float(r["impressions"]); lc=float(r["link_clicks"])
         pv=float(r["page_view"]); ld=float(r["leads"])
+        cl=float(r["clicks"]) if has_clicks else lc
         eng=float(r["engagement"]) if has_eng else 0
         out["days"].append(r["date"].strftime("%d/%m"))
         out["spend"].append(round(sp,2)); out["impressions"].append(int(imp))
-        out["link_clicks"].append(int(lc)); out["page_view"].append(int(pv))
-        out["leads"].append(int(ld)); out["engagement"].append(int(eng))
+        out["link_clicks"].append(int(lc)); out["clicks"].append(int(cl))
+        out["page_view"].append(int(pv)); out["leads"].append(int(ld))
+        out["engagement"].append(int(eng))
         out["ctr"].append(round(lc/imp*100,2) if imp>0 else None)
+        out["ctr_all"].append(round(cl/imp*100,2) if imp>0 else None)
         out["connect_rate"].append(round(pv/lc*100,2) if lc>0 else None)
         out["tx_conv"].append(round(ld/pv*100,2) if pv>0 else None)
         out["cpl"].append(round(sp/ld,2) if ld>0 else None)
@@ -163,25 +172,27 @@ def meta_raw(df):
     agg=df.groupby(["date","campaign","adset","is_lct"]).agg(
         spend=("spend","sum"),leads=("leads","sum"),
         impressions=("impressions","sum"),link_clicks=("link_clicks","sum"),
-        page_view=("page_view","sum")
+        clicks=("clicks","sum"),page_view=("page_view","sum")
     ).reset_index()
     for _,r in agg.iterrows():
         rows.append({
             "d":r["date"].strftime("%d/%m"),"c":str(r["campaign"]),"a":str(r["adset"]),
             "lct":bool(r["is_lct"]),"sp":round(float(r["spend"]),2),
             "ld":int(r["leads"]),"imp":int(r["impressions"]),
-            "lc":int(r["link_clicks"]),"pv":int(r["page_view"])
+            "lc":int(r["link_clicks"]),"cl":int(r["clicks"]),"pv":int(r["page_view"])
         })
     return rows
 
 def meta_tables_period(df, p, img_dir):
-    def ag(sub,cols): return sub.groupby(cols).agg(spend=("spend","sum"),impressions=("impressions","sum"),link_clicks=("link_clicks","sum"),page_view=("page_view","sum"),leads=("leads","sum")).reset_index()
+    def ag(sub,cols): return sub.groupby(cols).agg(spend=("spend","sum"),impressions=("impressions","sum"),link_clicks=("link_clicks","sum"),clicks=("clicks","sum"),page_view=("page_view","sum"),leads=("leads","sum")).reset_index()
 
     def calc_row(r):
         sp=round(float(r["spend"]),2); imp=int(r["impressions"]); lc=int(r["link_clicks"])
+        cl=int(r["clicks"]) if "clicks" in r.index else lc
         pv=int(r["page_view"]); ld=int(r["leads"])
-        return {"spend":sp,"imp":imp,"lc":lc,"pv":pv,"ld":ld,
+        return {"spend":sp,"imp":imp,"lc":lc,"cl":cl,"pv":pv,"ld":ld,
             "ctr":round(lc/imp*100,2) if imp>0 else None,
+            "ctr_all":round(cl/imp*100,2) if imp>0 else None,
             "cr":round(pv/lc*100,2) if lc>0 else None,
             "tx_cv":round(ld/pv*100,2) if pv>0 else None,
             "cpl":round(sp/ld,2) if ld>0 else None,
@@ -200,14 +211,16 @@ def meta_tables_period(df, p, img_dir):
         k=(str(r["ad"]),str(r["adset"]),str(r["campaign"]))
         if k not in thumb_map: thumb_map[k]=download_thumb(str(r["thumb"]),img_dir)
 
-    ads_agg=p.groupby(["ad","adset","campaign"]).agg(spend=("spend","sum"),impressions=("impressions","sum"),link_clicks=("link_clicks","sum"),leads=("leads","sum")).reset_index().sort_values("leads",ascending=False)
+    ads_agg=p.groupby(["ad","adset","campaign"]).agg(spend=("spend","sum"),impressions=("impressions","sum"),link_clicks=("link_clicks","sum"),clicks=("clicks","sum"),leads=("leads","sum")).reset_index().sort_values("leads",ascending=False)
     ads=[]
     for _,r in ads_agg.iterrows():
-        sp=round(float(r["spend"]),2); imp=int(r["impressions"]); lc=int(r["link_clicks"]); ld=int(r["leads"])
+        sp=round(float(r["spend"]),2); imp=int(r["impressions"])
+        lc=int(r["link_clicks"]); cl=int(r["clicks"]) if "clicks" in r.index else lc; ld=int(r["leads"])
         k=(str(r["ad"]),str(r["adset"]),str(r["campaign"]))
         ads.append({"n":str(r["ad"]),"adset":str(r["adset"]),"camp":str(r["campaign"]),
-            "thumb":thumb_map.get(k,""),"spend":sp,"imp":imp,"lc":lc,"ld":ld,
+            "thumb":thumb_map.get(k,""),"spend":sp,"imp":imp,"lc":lc,"cl":cl,"ld":ld,
             "ctr":round(lc/imp*100,2) if imp>0 else None,
+            "ctr_all":round(cl/imp*100,2) if imp>0 else None,
             "cpl":round(sp/ld,2) if ld>0 else None})
     return {"camps":camps,"adsets":adsets,"ads":ads}
 
