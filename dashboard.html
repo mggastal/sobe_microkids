@@ -1172,10 +1172,11 @@ function getMDforMeta(){
   if(selected.length===1) return selected[0];
   const ref=applyPeriod(md);
   const out={days:ref.days};
-  ['spend','impressions','link_clicks','page_view','leads','engagement'].forEach(k=>{
+  ['spend','impressions','link_clicks','clicks','page_view','leads','engagement'].forEach(k=>{
     out[k]=ref.days.map(day=>selected.reduce((sum,s)=>{const i=s.days?.indexOf(day);return sum+(i>=0?(s[k]?.[i]||0):0);},0));
   });
   out.ctr=out.days.map((_,i)=>out.impressions[i]>0?r2(out.link_clicks[i]/out.impressions[i]*100):null);
+  out.ctr_all=out.days.map((_,i)=>out.impressions[i]>0?r2((out.clicks[i]||out.link_clicks[i])/out.impressions[i]*100):null);
   out.connect_rate=out.days.map((_,i)=>out.link_clicks[i]>0?r2(out.page_view[i]/out.link_clicks[i]*100):null);
   out.tx_conv=out.days.map((_,i)=>out.page_view[i]>0?r2(out.leads[i]/out.page_view[i]*100):null);
   out.cpl=out.days.map((_,i)=>out.leads[i]>0?r2(out.spend[i]/out.leads[i]):null);
@@ -1238,7 +1239,7 @@ function getDailyForCamp(){
   // Somar arrays dia a dia usando as datas do getMD() como eixo
   const ref=applyPeriod(md); // dias filtrados pelo período
   const out={days:ref.days};
-  const numKeys=['spend','impressions','link_clicks','page_view','leads'];
+  const numKeys=['spend','impressions','link_clicks','clicks','page_view','leads'];
   numKeys.forEach(k=>{
     out[k]=ref.days.map(day=>{
       return selected.reduce((sum,s)=>{
@@ -1247,8 +1248,9 @@ function getDailyForCamp(){
       },0);
     });
   });
-  // Recalcular taxas com leads
+  // Recalcular taxas
   out.ctr=out.days.map((_,i)=>out.impressions[i]>0?+(out.link_clicks[i]/out.impressions[i]*100).toFixed(2):null);
+  out.ctr_all=out.days.map((_,i)=>out.impressions[i]>0?+((out.clicks[i]||out.link_clicks[i])/out.impressions[i]*100).toFixed(2):null);
   out.connect_rate=out.days.map((_,i)=>out.link_clicks[i]>0?+(out.page_view[i]/out.link_clicks[i]*100).toFixed(2):null);
   out.tx_conv=out.days.map((_,i)=>out.page_view[i]>0?+(out.leads[i]/out.page_view[i]*100).toFixed(2):null);
   out.cpl=out.days.map((_,i)=>out.leads[i]>0?+(out.spend[i]/out.leads[i]).toFixed(2):null);
