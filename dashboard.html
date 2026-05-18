@@ -947,7 +947,7 @@ function buildTable(elId,data,mainCol){
         <td style="font-size:10px;padding:6px 10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px">Total</td>
         ${(()=>{
           const tot={spend:0,imp:0,lc:0,cl:0,pv:0,ld:0};
-          data.forEach(r=>{tot.spend+=r.spend||0;tot.imp+=r.imp||0;tot.lc+=r.lc||0;tot.cl+=r.cl||0;tot.pv+=r.pv||0;tot.ld+=r.ld||0;});
+          data.forEach(r=>{tot.spend+=r.spend||0;tot.imp+=r.imp||0;tot.lc+=r.lc||0;tot.cl+=(r.cl||r.lc||0);tot.pv+=r.pv||0;tot.ld+=r.ld||0;});
           const ctr=tot.imp>0?r2(tot.lc/tot.imp*100):null;
           const ctr_all=tot.imp>0?r2(tot.cl/tot.imp*100):null;
           const cr=tot.lc>0?r2(tot.pv/tot.lc*100):null;
