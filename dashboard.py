@@ -20,7 +20,7 @@ from pathlib import Path
 # CONFIG
 # ══════════════════════════════════════════════════════
 SHEET_ID         = "1kKLTG5P6dPwYmXIRBm2DucM0bjk-rZJ0mzVNf3uyq5k"
-TEMPLATE_FILE    = "dashboard_microkids.html"
+TEMPLATE_FILE    = "dashboard.html"
 OUTPUT_FILE      = "index.html"
 
 NOME_CLIENTE     = "Microkids"
