@@ -19,6 +19,7 @@ from pathlib import Path
 # ══════════════════════════════════════════════════════
 # CONFIG
 # ══════════════════════════════════════════════════════
+
 SHEET_ID         = "1kKLTG5P6dPwYmXIRBm2DucM0bjk-rZJ0mzVNf3uyq5k"
 TEMPLATE_FILE    = "dashboard.html"
 OUTPUT_FILE      = "index.html"
@@ -638,14 +639,14 @@ def inject_all(tpl, meta_k, meta_d, meta_dc, meta_raw_c, meta_t, meta_bd, meta_m
     html=replace_js_const(html,"GOOGLE_BD",      g_bd)
     html=replace_js_const(html,"GOOGLE_MONTHLY", g_month)
     html=replace_js_const(html,"GOOGLE_RAW",     g_raw)
-    _cpl_bom   = globals().get("CPL_BOM",   globals().get("CPA_BOM",   5.0))
-    _cpl_medio = globals().get("CPL_MEDIO", globals().get("CPA_MEDIO", 10.0))
+CPL_BOM          = 40.0
+CPL_MEDIO        = 45.0
     for k,v in [("LANCAMENTO_COD",f"'{LANCAMENTO_COD}'"),("NOME_CLIENTE",f"'{NOME_CLIENTE}'"),
                 ("LOGO_LETRA",f"'{LOGO_LETRA}'"),("COR_ACENTO",f"'{COR_ACENTO}'"),
-                ("CPL_BOM",str(_cpl_bom)),("CPL_MEDIO",str(_cpl_medio)),
-                ("CTR_BOM",str(CTR_BOM)),("CTR_MEDIO",str(CTR_MEDIO)),
-                ("CR_BOM",str(CR_BOM)),("CR_MEDIO",str(CR_MEDIO)),
-                ("TX_CONV_BOM",str(TX_CONV_BOM)),("TX_CONV_MEDIO",str(TX_CONV_MEDIO)),
+CPL_MEDIO        = 45.0
+CTR_MEDIO        = 0.4
+CR_MEDIO         = 60.0
+TX_CONV_MEDIO    = 2.0
                 ("CPM_BOM",str(CPM_BOM)),("CPM_MEDIO",str(CPM_MEDIO))]:
         html=re.sub(rf"const {k}\s*=\s*[^;]+;",f"const {k}={v};",html,count=1)
     html=re.sub(r"\d{2}/\d{2}/\d{4} · via planilha",date.today().strftime("%d/%m/%Y")+" · via planilha",html)
@@ -680,7 +681,7 @@ def main():
         g_bd=google_breakdowns(df_google)
         g_month=google_monthly(df_google)
         g_raw=google_raw(df_google)
-        print(f"  ✓ {df_google['conversions'].sum():.0f} conv. | $ {df_google['spend'].sum():,.2f} invest.")
+        print(f"  ✓ {df_google['conversions'].sum():.0f} conv. | R$ {df_google['spend'].sum():,.2f} invest.")
     except Exception as e:
         print(f"  Aviso Google: {e}")
         g_daily={"days":[],"spend":[],"conversions":[],"cpa":[],"ctr":[],"cpc":[]}
