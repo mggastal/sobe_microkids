@@ -356,14 +356,13 @@ def load_google():
         df2["clicks"]=to_num(df2["Clicks"])
         df2["impressions"]=to_num(df2["Impressions"])
         df2["campaign"]=df2["Campaign Name"]
-        df2["adgroup"]=df2["Ad Group Name"]
-        df2["keyword"]=""  # sem keyword
+        # PMax não tem Ad Group Name
+        df2["adgroup"]=df2["Ad Group Name"] if "Ad Group Name" in df2.columns else df2["Campaign Name"]
+        df2["keyword"]=""
         df2["match_type"]=""
-        df2["channel_type"]=df2["Advertising Channel Type"] if "Advertising Channel Type" in df2.columns else "Outros"
         df2["is_search"]=False
         df2=df2.dropna(subset=["date"])
         print(f"     Outros (Display/PMax/etc): {len(df2)} linhas | campanhas: {df2['campaign'].nunique()}")
-        # Unificar — só as colunas comuns
         cols=["date","campaign","adgroup","keyword","match_type","spend","conversions","clicks","impressions","is_search"]
         df=pd.concat([df[cols], df2[cols]], ignore_index=True)
     except Exception as e:
