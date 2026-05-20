@@ -1501,7 +1501,32 @@ function renderGoogle(){
   if(!GOOGLE_DAILY||!GOOGLE_KPIS) return;
 
   const key=getPeriodKey()||'all';
-  const gk=GOOGLE_KPIS[key]||GOOGLE_KPIS['all']||{};
+
+  // KPIs — se datas livres, calcular do GOOGLE_RAW filtrado
+  let gk;
+  if(getPeriodKey()===null && GOOGLE_RAW?.length){
+    // Reutilizar o raw já filtrado em getGooglePeriodData
+    const hoje=getHoje();
+    const filtered=GOOGLE_RAW.filter(r=>{
+      const dt=parseDayStr(r.d);
+      if(periodDays>0){
+        const fim=new Date(hoje); if(periodDays===1) fim.setDate(fim.getDate()-1); fim.setHours(23,59,59);
+        const ini=new Date(fim); ini.setDate(ini.getDate()-(periodDays===1?0:periodDays-1)); ini.setHours(0,0,0,0);
+        if(dt<ini||dt>fim) return false;
+      }
+      if(dateI&&dt<dateI) return false;
+      if(dateF&&dt>dateF) return false;
+      return true;
+    });
+    const sp=filtered.reduce((a,r)=>a+r.sp,0);
+    const cv=filtered.reduce((a,r)=>a+r.cv,0);
+    const cl=filtered.reduce((a,r)=>a+r.cl,0);
+    const imp=filtered.reduce((a,r)=>a+r.imp,0);
+    gk={spend:r2(sp),conversions:r2(cv),clicks:cl,impressions:imp,
+      cpa:cv>0?r2(sp/cv):null, cpc:cl>0?r2(sp/cl):null, ctr:imp>0?r2(cl/imp*100):null};
+  } else {
+    gk=GOOGLE_KPIS[key]||GOOGLE_KPIS['all']||{};
+  }
   const cpaCls=v=>!v?'cn':v<=10?'cg':v<=30?'cw2':'cr';
   // Conversões sempre inteiras
   const fConv=v=>v==null?'—':fN(Math.round(v));
