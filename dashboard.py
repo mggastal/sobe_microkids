@@ -74,9 +74,9 @@ def download_thumb(url, d):
     except: return ""
 
 # ══ META ADS ══════════════════════════════════════════
-# Coluna de conversão — Conversion Contact Total já inclui todos os tipos de contato
+# Coluna de conversão — usa coluna "Conversões" da planilha (já soma tudo)
 CONV_COLS = [
-    "Conversion Contact Total",
+    "Conversões",
 ]
 
 def load_meta():
@@ -97,7 +97,7 @@ def load_meta():
     if "clicks" not in df.columns: df["clicks"]=df["link_clicks"]  # fallback
     # Somar todas as colunas de conversão disponíveis
     df["leads"] = sum(to_num(df[c]) for c in CONV_COLS if c in df.columns)
-    print(f"     Conversões somadas: {', '.join(c for c in CONV_COLS if c in df.columns)}")
+    print(f"     Coluna: {', '.join(c for c in CONV_COLS if c in df.columns)}")
     df["is_lct"]=df["campaign"].str.contains(LANCAMENTO_COD,na=False,case=False) if LANCAMENTO_COD else True
     df=df.dropna(subset=["date"])
     print(f"     {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
