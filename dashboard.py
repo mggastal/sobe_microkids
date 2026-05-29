@@ -74,11 +74,8 @@ def download_thumb(url, d):
     except: return ""
 
 # ══ META ADS ══════════════════════════════════════════
-# Colunas de conversão somadas para "leads" nesta versão v2
+# Coluna de conversão — Conversion Contact Total já inclui todos os tipos de contato
 CONV_COLS = [
-    "Action FB Pixel Custom (Offsite Conversion)",
-    "Action Messaging Conversations Started (Onsite Conversion)",
-    "Action Leads",
     "Conversion Contact Total",
 ]
 
