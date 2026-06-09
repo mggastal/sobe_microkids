@@ -405,29 +405,32 @@ def load_google():
 
 
 def apply_pesq_spend(df):
-    """Substitui o spend diário das campanhas search pelo valor real do google-ads-pesquisa.
-    O df de keywords só tem o spend atribuído a palavras — a diferença se perde.
-    O google-ads-pesquisa tem o spend total real da rede de pesquisa por campanha/data."""
+    """Adiciona linhas extras com a diferença de spend entre google-ads-pesquisa e keywords.
+    Keywords mantêm seu spend original. A diferença entra como linha com keyword vazia
+    (será filtrada do Top Palavras-chave mas conta nos KPIs/daily/monthly agregados)."""
     global _dfp_pesquisa
     if _dfp_pesquisa.empty: return df
 
-    df = df.copy()
-    # Para cada campanha search presente no dfp, ajustar o spend diário
+    extras = []
     for camp in _dfp_pesquisa["campaign"].unique():
-        mask_camp = df["campaign"] == camp
-        if not mask_camp.any(): continue
-        # Para cada data, calcular fator de correção: spend_pesq / spend_kw
         for dt in _dfp_pesquisa[_dfp_pesquisa["campaign"]==camp]["date"].unique():
             sp_pesq = float(_dfp_pesquisa[
                 (_dfp_pesquisa["campaign"]==camp) & (_dfp_pesquisa["date"]==dt)
             ]["spend"].sum())
-            mask = mask_camp & (df["date"]==dt)
+            mask = (df["campaign"]==camp) & (df["date"]==dt)
             sp_kw = float(df[mask]["spend"].sum())
-            if sp_kw > 0 and sp_pesq > sp_kw:
-                # Distribuir a diferença proporcionalmente entre as linhas do dia
-                fator = sp_pesq / sp_kw
-                df.loc[mask, "spend"] = df.loc[mask, "spend"] * fator
-    return df
+            diff = round(sp_pesq - sp_kw, 4)
+            if diff > 0.01:
+                # Linha extra com a diferença — keyword vazia, sem conversões
+                row = {"date":dt,"campaign":camp,"adgroup":"","keyword":"__pesq_diff__",
+                       "match_type":"","spend":diff,"conversions":0,"clicks":0,
+                       "impressions":0,"is_search":True}
+                extras.append(row)
+
+    if not extras:
+        return df
+    df_extra = pd.DataFrame(extras)
+    return pd.concat([df, df_extra], ignore_index=True)
 
 def google_daily(df):
     agg=df.groupby("date").agg(spend=("spend","sum"),conversions=("conversions","sum"),
@@ -543,8 +546,8 @@ def google_keywords(df):
     def kws_period(p):
         ag=p.groupby("keyword").agg(spend=("spend","sum"),conversions=("conversions","sum"),
             clicks=("clicks","sum"),impressions=("impressions","sum")).reset_index()
-        # Remover keywords vazias (PMax sem keyword)
-        ag=ag[ag["keyword"].astype(str).str.strip()!=""]
+        # Remover keywords vazias e linhas de ajuste de spend
+        ag=ag[~ag["keyword"].astype(str).str.strip().isin(["","__pesq_diff__"])]
         ag=ag[ag["spend"]>0].sort_values("conversions",ascending=False).head(25)
         rows=[]
         for _,k in ag.iterrows():
