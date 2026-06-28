@@ -1,35 +1,30 @@
 name: Atualizar Dashboard Lançamento Gratuito
-
 on:
   schedule:
     - cron: '0 9 * * *'   # 06:00 Brasília = 09:00 UTC
-  workflow_dispatch:        # botão para rodar manualmente também
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Instalar dependências
         run: pip install pandas requests openpyxl
-
       - name: Rodar gerador
         run: python dashboard.py
-
       - name: Commit e push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html imgs/ data.json
+          # Atualizar timestamp no index.html para triggar GitHub Pages build
+          sed -i "s/<!-- updated: .* -->/<!-- updated: $(date +'%Y-%m-%d %H:%M') -->/" index.html
+          git add data.json imgs/ index.html
           git diff --staged --quiet || git commit -m "Dashboard atualizado $(date +'%d/%m/%Y %H:%M')"
           git push
