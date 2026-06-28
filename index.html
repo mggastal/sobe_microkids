@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon — coloque sobe.png no repo do cliente para aparecer -->
+  <!-- updated: 2026-06-28 22:10 -->
+  <link rel="shortcut icon" href="./sobe.png">
+  <link rel="icon" type="image/png" href="./sobe.png">
+  <title>Carregando...</title>
+  <style>
+    body { margin: 0; background: #0a0f1e; display: flex; align-items: center;
+           justify-content: center; height: 100vh; font-family: sans-serif; }
+    .loader { text-align: center; color: rgba(255,255,255,.4); }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,.1);
+               border-top-color: #6659A5; border-radius: 50%;
+               animation: spin .7s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+    <div>Carregando dados...</div>
+  </div>
+
+  <script>
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║                     CONFIG DO LOADER                        ║
+    // ╠══════════════════════════════════════════════════════════════╣
+
+    // Repositório central do template (GitHub Pages da Sobé)
+    // Trocar se o repo do template mudar de nome ou usuário
+    const TEMPLATE_REPO = 'https://mggastal.github.io/sobe-template';
+
+    // Nome do arquivo de template dentro do TEMPLATE_REPO
+    const TEMPLATE_FILE = 'template.html';
+
+    // Nome do arquivo de dados gerado pelo dashboard.py
+    const DATA_FILE = 'data.json';
+
+    // ╚══════════════════════════════════════════════════════════════╝
+
+    const TEMPLATE_URL = `${TEMPLATE_REPO}/${TEMPLATE_FILE}`;
+    const DATA_URL     = `./${DATA_FILE}`;
+    const BASE_URL     = window.location.href.replace(/\/[^\/]*$/, '/');
+
+    Promise.all([
+      fetch(TEMPLATE_URL).then(r => { if(!r.ok) throw new Error('Template indisponível'); return r.text(); }),
+      fetch(DATA_URL).then(r => { if(!r.ok) throw new Error('data.json não encontrado'); return r.json(); })
+    ])
+    .then(([templateHtml, data]) => {
+      // Injetar dados antes do </head>
+      const dataScript = `<script>
+window.DASH_DATA = ${JSON.stringify(data)};
+window.DASH_BASE_URL = '${BASE_URL}';
+<\/script>`;
+      templateHtml = templateHtml.replace('</head>', dataScript + '</head>');
+
+      document.open();
+      document.write(templateHtml);
+      document.close();
+    })
+    .catch(err => {
+      document.body.innerHTML = `
+        <div style="color:#f87171;text-align:center;font-family:sans-serif;padding:40px">
+          <div style="font-size:24px;margin-bottom:12px">⚠️ Erro ao carregar</div>
+          <div style="opacity:.6;font-size:14px">${err.message}</div>
+        </div>`;
+    });
+  </script>
+</body>
+</html>
