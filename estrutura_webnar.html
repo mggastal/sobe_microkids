@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microkids · Estrutura de Campanhas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f2f7;--surface:#fff;--surface2:#f7f8fc;--border:rgba(0,0,0,.07);
+  --text:#0f1523;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#AD96DC;--accent-soft:rgba(173,150,220,.14);
+  --meta:#0866FF;--meta-soft:rgba(8,102,255,.10);
+  --google:#1a73e8;--yt:#FF0033;--pmax:#12A150;--search:#F9AB00;
+  --sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 6px 24px rgba(15,21,35,.08);--r:12px;
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--border:rgba(255,255,255,.08);
+  --text:#f0f4ff;--muted:#8b95a9;--muted2:#5a6478;
+  --accent-soft:rgba(173,150,220,.16);--meta-soft:rgba(8,102,255,.16);
+  --sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 8px 30px rgba(0,0,0,.4);
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh;align-items:start;}
+
+/* SIDEBAR */
+.sb{background:#0f1523;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:11px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-box{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:#0f1523;flex-shrink:0;background:var(--accent);}
+.logo-name{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1;}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;}
+.sb-section{padding:16px 10px 4px;}
+.sb-plat{padding:4px 4px 10px;}
+.sb-plat-hd{display:flex;align-items:center;gap:8px;padding:6px 10px 4px;}
+.sb-plat-ico{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.sb-plat-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1.5px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.48);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.sb-item.active{background:var(--accent-soft);color:#fff;}
+.sb-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.05);}
+.sb-footer span{font-size:10px;color:rgba(255,255,255,.28);display:block;line-height:1.5;}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:9000;box-shadow:0 2px 10px rgba(0,0,0,.05);gap:10px;flex-wrap:wrap;}
+.tb-l{display:flex;align-items:center;gap:12px;min-width:0;}
+.mob-menu{display:none;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;}
+.page-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:16px;}
+.tb-badge{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;}
+.tb-badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(173,150,220,.5);}70%{box-shadow:0 0 0 7px rgba(173,150,220,0);}100%{box-shadow:0 0 0 0 rgba(173,150,220,0);}}
+.theme-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;}
+
+.content{padding:24px;max-width:1180px;width:100%;margin:0 auto;}
+
+/* HERO */
+.hero{position:relative;border-radius:16px;overflow:hidden;padding:30px 32px;margin-bottom:30px;background:linear-gradient(135deg,#0f1523 0%,#1b2540 55%,#243154 100%);box-shadow:var(--sh2);}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 15%,rgba(0,174,239,.35),transparent 45%),radial-gradient(circle at 15% 90%,rgba(173,150,220,.28),transparent 50%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#63d3ff;margin-bottom:12px;}
+.hero-eyebrow .tag{background:rgba(99,211,255,.14);border:1px solid rgba(99,211,255,.3);border-radius:6px;padding:3px 8px;letter-spacing:1px;}
+.hero h1{font-family:'DM Sans',sans-serif;font-weight:700;font-size:27px;line-height:1.18;color:#fff;max-width:640px;margin-bottom:14px;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:8px 13px;color:#dfe6f5;font-size:12.5px;font-weight:600;}
+.hero-chip b{color:#63d3ff;font-family:'DM Mono',monospace;font-weight:500;}
+.hero p{color:rgba(255,255,255,.6);font-size:13px;max-width:600px;line-height:1.6;}
+
+/* SECTION */
+.sec{margin-bottom:34px;}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.sec-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--sh);}
+.sec-ico svg{width:22px;height:22px;display:block;}
+.sec-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:19px;line-height:1.1;}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.sec-desc{font-size:13px;color:var(--muted);margin:12px 0 18px;line-height:1.6;max-width:760px;}
+
+/* MAP GRID */
+.map{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.node{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;}
+.node:hover{transform:translateY(-3px);box-shadow:var(--sh2);}
+.node-top{padding:16px 16px 14px;display:flex;align-items:flex-start;gap:11px;border-bottom:1px solid var(--border);}
+.node-badge{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-family:'DM Sans',sans-serif;font-size:13px;}
+.node-hd{min-width:0;flex:1;}
+.node-name{font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;line-height:1.1;}
+.node-kind{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);font-weight:700;margin-top:4px;}
+.node-body{padding:14px 16px 16px;flex:1;}
+.node-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin-bottom:9px;}
+.fmt{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12.5px;font-weight:500;color:var(--text);border-bottom:1px dashed var(--border);}
+.fmt:last-child{border-bottom:none;}
+.fmt .mk{width:6px;height:6px;border-radius:2px;flex-shrink:0;}
+.node-note{margin-top:12px;font-size:11px;color:var(--muted);background:var(--surface2);border-radius:8px;padding:9px 11px;line-height:1.5;}
+
+/* CONVERSION BADGE */
+.conv{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:700;}
+.conv svg{width:14px;height:14px;}
+
+/* META specific layout: 2 columns */
+.map-2{grid-template-columns:repeat(2,1fr);}
+.publicos{display:grid;gap:8px;margin-top:4px;}
+.pub{display:flex;align-items:center;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
+.pub-n{width:24px;height:24px;border-radius:7px;flex-shrink:0;background:var(--meta-soft);color:var(--meta);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
+.pub-t{font-size:12.5px;font-weight:600;}
+.pub-s{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* SHARED PUBLICOS NOTE */
+.shared-tip{display:flex;align-items:center;gap:10px;background:var(--meta-soft);border:1px solid rgba(8,102,255,.18);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:var(--text);font-weight:500;}
+.shared-tip svg{width:17px;height:17px;flex-shrink:0;color:var(--meta);}
+
+/* KEYWORDS */
+.kw-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);padding:20px 22px;margin-top:16px;}
+.kw-hd{display:flex;align-items:center;gap:9px;margin-bottom:4px;}
+.kw-hd .dot{width:8px;height:8px;border-radius:2px;background:var(--search);}
+.kw-hd h3{font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;}
+.kw-hd .cnt{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:20px;padding:3px 10px;}
+.kw-sub{font-size:11.5px;color:var(--muted);margin-bottom:16px;}
+.kw-group{margin-bottom:15px;}
+.kw-group:last-child{margin-bottom:0;}
+.kw-glbl{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted2);font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px;}
+.kw-glbl .bar{width:14px;height:2px;border-radius:2px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{font-family:'DM Mono',monospace;font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 11px;color:var(--text);transition:all .15s;}
+.chip:hover{border-color:var(--search);color:var(--search);}
+
+/* UTMS */
+.utm-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.utm-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);padding:18px 20px;}
+.utm-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.utm-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-family:'DM Sans',sans-serif;font-size:11px;}
+.utm-hd h3{font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;}
+.utm-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin-bottom:8px;}
+.code{font-family:'DM Mono',monospace;font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 13px;line-height:1.9;word-break:break-all;color:var(--muted);}
+.code .k{color:var(--text);font-weight:500;}
+.code .v{color:var(--accent);}
+.code .amp{color:var(--muted2);}
+.utm-ex{margin-top:14px;}
+.ex-row{display:grid;grid-template-columns:120px 1fr;gap:8px;padding:6px 0;border-bottom:1px dashed var(--border);font-size:11.5px;align-items:center;}
+.ex-row:last-child{border-bottom:none;}
+.ex-k{font-family:'DM Mono',monospace;color:var(--muted2);font-size:11px;}
+.ex-v{font-family:'DM Mono',monospace;font-weight:500;color:var(--text);word-break:break-all;}
+
+.pagefoot{text-align:center;padding:26px 0 8px;color:var(--muted2);font-size:11px;}
+.pagefoot b{color:var(--accent);font-family:'DM Sans',sans-serif;}
+
+@media(max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sb{position:fixed;left:-220px;width:210px;z-index:9500;transition:left .25s;box-shadow:0 0 30px rgba(0,0,0,.4);}
+  .sb.open{left:0;}
+  .mob-menu{display:block;}
+  .map,.map-2,.utm-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:22px;}
+  .content{padding:18px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sb" id="sidebar">
+    <div class="sb-logo">
+      <div class="logo-box">MK</div>
+      <div>
+        <div class="logo-name">Microkids</div>
+        <div class="logo-sub">Sobé Estratégias</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-plat">
+        <a href="#topo" class="sb-item active" onclick="closeSb()"><span class="dot" style="background:#63d3ff"></span>Visão da Campanha</a>
+      </div>
+      <div class="sb-plat">
+        <div class="sb-plat-hd">
+          <div class="sb-plat-ico" style="background:linear-gradient(135deg,#1a73e8,#12A150)">G</div>
+          <span class="sb-plat-lbl">Google Ads</span>
+        </div>
+        <a href="#google" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--yt)"></span>YouTube</a>
+        <a href="#google" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--pmax)"></span>Performance Max</a>
+        <a href="#google" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--search)"></span>Search + Palavras-chave</a>
+      </div>
+      <div class="sb-plat">
+        <div class="sb-plat-hd">
+          <div class="sb-plat-ico" style="background:var(--meta)">f</div>
+          <span class="sb-plat-lbl">Meta Ads</span>
+        </div>
+        <a href="#meta" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--meta)"></span>Captação Webinar</a>
+        <a href="#meta" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--accent)"></span>Download do PDF</a>
+      </div>
+      <div class="sb-plat">
+        <div class="sb-plat-hd">
+          <div class="sb-plat-ico" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">✦</div>
+          <span class="sb-plat-lbl">Rastreamento</span>
+        </div>
+        <a href="#utms" class="sb-item" onclick="closeSb()"><span class="dot" style="background:var(--accent)"></span>Padrão de UTMs</a>
+      </div>
+    </div>
+    <div class="sb-footer">
+      <span>Estrutura de mídia paga</span>
+      <span>Webinar · Jul/2026</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-l">
+        <button class="mob-menu" onclick="toggleSb()">☰</button>
+        <div class="page-title">Estrutura de Campanhas</div>
+        <span class="tb-badge"><span class="pulse"></span>Campanha ativa</span>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Escuro</span></button>
+    </div>
+
+    <div class="content" id="topo">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag">PNLD 2027 · Anos Iniciais</span> Webinar de captação</div>
+          <h1>Educação Digital e Midiática: muito além das telas</h1>
+          <div class="hero-meta">
+            <span class="hero-chip">📅 <b>23/07/2026</b> · Quinta-feira</span>
+            <span class="hero-chip">🕢 às <b>19h30</b></span>
+            <span class="hero-chip">🎯 Objetivo: <b>inscrições + downloads</b></span>
+          </div>
+          <p>Mapa das campanhas de mídia paga ativas em Google Ads e Meta Ads para a captação de leads do webinar e do material em PDF.</p>
+        </div>
+      </div>
+
+      <!-- ======================= GOOGLE ADS ======================= -->
+      <div class="sec" id="google">
+        <div class="sec-hd">
+          <div class="sec-ico" style="background:#fff;border:1px solid var(--border)">
+            <svg viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg>
+          </div>
+          <div>
+            <div class="sec-title">Google Ads</div>
+            <div class="sec-sub">Estrutura dividida em 3 campanhas</div>
+          </div>
+        </div>
+        <p class="sec-desc">Cobertura de topo a fundo de funil: vídeo para descoberta (YouTube), otimização automática cross-canal (Performance Max) e intenção de busca ativa (Search).</p>
+
+        <div class="map">
+          <!-- YouTube -->
+          <div class="node">
+            <div class="node-top">
+              <div class="node-hd">
+                <div class="node-name">YouTube</div>
+                <div class="node-kind">Campanha de vídeo</div>
+              </div>
+            </div>
+            <div class="node-body">
+              <div class="node-lbl">Formatos</div>
+              <div class="fmt"><span class="mk" style="background:var(--yt)"></span>Vídeos</div>
+              <div class="node-note"><b style="color:var(--text)">Objetivo:</b> Leads, alcance e reconhecimento no topo do funil, apresentando o tema do webinar a novos públicos.</div>
+            </div>
+          </div>
+
+          <!-- PMAX -->
+          <div class="node">
+            <div class="node-top">
+              <div class="node-hd">
+                <div class="node-name">Performance Max</div>
+                <div class="node-kind">Campanha multicanal</div>
+              </div>
+            </div>
+            <div class="node-body">
+              <div class="node-lbl">Formatos combinados</div>
+              <div class="fmt"><span class="mk" style="background:var(--pmax)"></span>Vídeos</div>
+              <div class="fmt"><span class="mk" style="background:var(--pmax)"></span>Pesquisa</div>
+              <div class="fmt"><span class="mk" style="background:var(--pmax)"></span>E-mail</div>
+              <div class="fmt"><span class="mk" style="background:var(--pmax)"></span>Imagens</div>
+              <div class="node-note">A IA do Google distribui os criativos entre todos os canais buscando o maior volume de conversões.</div>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <div class="node">
+            <div class="node-top">
+              <div class="node-hd">
+                <div class="node-name">Search</div>
+                <div class="node-kind">Rede de pesquisa</div>
+              </div>
+            </div>
+            <div class="node-body">
+              <div class="node-lbl">Base da campanha</div>
+              <div class="fmt"><span class="mk" style="background:var(--search)"></span>Palavras-chave</div>
+              <div class="node-note">Captura de intenção ativa — quem já busca por PNLD, BNCC e temas de tecnologia educacional. Termos detalhados abaixo.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KEYWORDS -->
+        <div class="kw-wrap">
+          <div class="kw-hd">
+            <span class="dot"></span>
+            <h3>Palavras-chave · Search</h3>
+            <span class="cnt">20 termos</span>
+          </div>
+          <div class="kw-sub">Agrupadas por intenção de busca para leitura e otimização mais claras.</div>
+
+          <div class="kw-group">
+            <div class="kw-glbl"><span class="bar" style="background:var(--accent)"></span>Marca & Produto</div>
+            <div class="chips">
+              <span class="chip">microkids</span>
+              <span class="chip">Microkids educação tecnológica</span>
+              <span class="chip">material didático tecnologia educacional</span>
+            </div>
+          </div>
+
+          <div class="kw-group">
+            <div class="kw-glbl"><span class="bar" style="background:var(--search)"></span>PNLD 2027</div>
+            <div class="chips">
+              <span class="chip">PNLD</span>
+              <span class="chip">PNLD 2027</span>
+              <span class="chip">PNLD 2027 Anos Iniciais</span>
+              <span class="chip">como se preparar para o PNLD 2027</span>
+              <span class="chip">material aprovado PNLD</span>
+            </div>
+          </div>
+
+          <div class="kw-group">
+            <div class="kw-glbl"><span class="bar" style="background:var(--pmax)"></span>BNCC & Currículo</div>
+            <div class="chips">
+              <span class="chip">BNCC</span>
+              <span class="chip">BNCC Computação</span>
+            </div>
+          </div>
+
+          <div class="kw-group">
+            <div class="kw-glbl"><span class="bar" style="background:#63d3ff"></span>Tema do Webinar · Educação Digital</div>
+            <div class="chips">
+              <span class="chip">Educação Digital e Midiática</span>
+              <span class="chip">Webinar Educação Digital e Midiática</span>
+              <span class="chip">Mundo Digital</span>
+              <span class="chip">Cultura Digital</span>
+            </div>
+          </div>
+
+          <div class="kw-group">
+            <div class="kw-glbl"><span class="bar" style="background:var(--meta)"></span>Metodologias & Práticas</div>
+            <div class="chips">
+              <span class="chip">Pensamento Computacional</span>
+              <span class="chip">Cultura Maker</span>
+              <span class="chip">Atividades Desplugadas</span>
+              <span class="chip">Atividades Plugadas</span>
+              <span class="chip">Metodologias Ativas</span>
+              <span class="chip">Robótica</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================= META ADS ======================= -->
+      <div class="sec" id="meta">
+        <div class="sec-hd">
+          <div class="sec-ico" style="background:#fff;border:1px solid var(--border)">
+            <img src="https://mggastal.github.io/sobe-template/metaads.png" alt="Meta Ads" style="width:24px;height:24px;object-fit:contain;display:block" onerror="this.outerHTML='<span style=&quot;font-family:DM Sans;font-weight:700;color:#0866FF;font-size:20px&quot;>f</span>'">
+          </div>
+          <div>
+            <div class="sec-title">Meta Ads</div>
+            <div class="sec-sub">2 campanhas · Instagram &amp; Facebook</div>
+          </div>
+        </div>
+        <p class="sec-desc">Duas frentes de conversão sobre a mesma base de públicos: uma para inscrições no webinar, outra para captura de leads via download do material.</p>
+
+        <div class="shared-tip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          As duas campanhas utilizam os <b>&nbsp;mesmos 3 conjuntos de públicos&nbsp;</b> — muda apenas o criativo e a ação de conversão.
+        </div>
+
+        <div class="map map-2">
+          <!-- Captação -->
+          <div class="node">
+            <div class="node-top">
+              <div class="node-badge" style="background:var(--meta)">01</div>
+              <div class="node-hd">
+                <div class="node-name">Captação Webinar</div>
+                <div class="node-kind">Campanha de conversão</div>
+              </div>
+            </div>
+            <div class="node-body">
+              <div class="node-lbl">Conjuntos de anúncios</div>
+              <div class="publicos">
+                <div class="pub"><div class="pub-n">A</div><div><div class="pub-t">Interesses (cargos)</div><div class="pub-s">Segmentação por perfil profissional</div></div></div>
+                <div class="pub"><div class="pub-n">B</div><div><div class="pub-t">Lookalike de Leads</div><div class="pub-s">Semelhantes a quem já converteu</div></div></div>
+                <div class="pub"><div class="pub-n">C</div><div><div class="pub-t">Públicos quentes</div><div class="pub-s">Seguidores, engajados e leads</div></div></div>
+              </div>
+              <div class="conv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+                Conversão: cadastro no webinar
+              </div>
+            </div>
+          </div>
+
+          <!-- Download PDF -->
+          <div class="node">
+            <div class="node-top">
+              <div class="node-badge" style="background:var(--accent)">02</div>
+              <div class="node-hd">
+                <div class="node-name">Download do PDF</div>
+                <div class="node-kind">Campanha de conversão</div>
+              </div>
+            </div>
+            <div class="node-body">
+              <div class="node-lbl">Conjuntos de anúncios</div>
+              <div class="publicos">
+                <div class="pub"><div class="pub-n" style="background:var(--accent-soft);color:var(--accent)">A</div><div><div class="pub-t">Interesses (cargos)</div><div class="pub-s">Segmentação por perfil profissional</div></div></div>
+                <div class="pub"><div class="pub-n" style="background:var(--accent-soft);color:var(--accent)">B</div><div><div class="pub-t">Lookalike de Leads</div><div class="pub-s">Semelhantes a quem já converteu</div></div></div>
+                <div class="pub"><div class="pub-n" style="background:var(--accent-soft);color:var(--accent)">C</div><div><div class="pub-t">Públicos quentes</div><div class="pub-s">Seguidores, engajados e leads</div></div></div>
+              </div>
+              <div class="conv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                Conversão: download do material
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================= UTMs ======================= -->
+      <div class="sec" id="utms">
+        <div class="sec-hd">
+          <div class="sec-ico" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <div class="sec-title">Padrão de UTMs</div>
+            <div class="sec-sub">Rastreamento consistente em todas as campanhas</div>
+          </div>
+        </div>
+        <p class="sec-desc">Toda origem de tráfego pago segue o mesmo padrão de parametrização, garantindo que cada conversão seja atribuída à campanha, público e posicionamento corretos no dashboard.</p>
+
+        <div class="utm-grid">
+          <!-- META UTM -->
+          <div class="utm-card">
+            <div class="utm-hd">
+              <div class="utm-ico" style="background:var(--meta)">f</div>
+              <h3>Meta Ads</h3>
+            </div>
+            <div class="utm-lbl">Estrutura</div>
+            <div class="code">
+              <span class="k">utm_source</span>=<span class="v">meta-ads</span><span class="amp">&amp;</span><span class="k">utm_medium</span>=<span class="v">{{adset.name}}</span><span class="amp">&amp;</span><span class="k">utm_campaign</span>=<span class="v">{{campaign.name}}</span><span class="amp">&amp;</span><span class="k">utm_content</span>=<span class="v">{{placement}}</span>
+            </div>
+            <div class="utm-ex">
+              <div class="utm-lbl">Exemplo real</div>
+              <div class="ex-row"><span class="ex-k">utm_source</span><span class="ex-v">meta-ads</span></div>
+              <div class="ex-row"><span class="ex-k">utm_medium</span><span class="ex-v">01-INTERESSES-CARGOS</span></div>
+              <div class="ex-row"><span class="ex-k">utm_campaign</span><span class="ex-v">SOBE-WEBNARIO01-CAPTACAO</span></div>
+              <div class="ex-row"><span class="ex-k">utm_content</span><span class="ex-v">Instagram_Feed</span></div>
+            </div>
+          </div>
+
+          <!-- GOOGLE UTM -->
+          <div class="utm-card">
+            <div class="utm-hd">
+              <div class="utm-ico" style="background:linear-gradient(135deg,#1a73e8,#34A853)">G</div>
+              <h3>Google Ads</h3>
+            </div>
+            <div class="utm-lbl">Estrutura</div>
+            <div class="code">
+              <span class="k">utm_source</span>=<span class="v">google-ads</span><span class="amp">&amp;</span><span class="k">utm_medium</span>=<span class="v">cpc</span><span class="amp">&amp;</span><span class="k">utm_campaign</span>=<span class="v">search</span><span class="amp">&amp;</span><span class="k">utm_term</span>=<span class="v">{palavra-chave}</span>
+            </div>
+            <div class="utm-ex">
+              <div class="utm-lbl">Exemplo real</div>
+              <div class="ex-row"><span class="ex-k">utm_source</span><span class="ex-v">google-ads</span></div>
+              <div class="ex-row"><span class="ex-k">utm_medium</span><span class="ex-v">cpc</span></div>
+              <div class="ex-row"><span class="ex-k">utm_campaign</span><span class="ex-v">search</span></div>
+              <div class="ex-row"><span class="ex-k">utm_term</span><span class="ex-v">pnld</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagefoot">Desenvolvido por <b>Sobé Estratégias</b> · Estrutura de mídia paga — Microkids</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement;
+  const dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';
+  document.getElementById('themeLabel').textContent=dark?'Escuro':'Claro';
+}
+function toggleSb(){document.getElementById('sidebar').classList.toggle('open');}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');}
+/* active state on sidebar scroll */
+const secs=['topo','google','meta','utms'];
+window.addEventListener('scroll',()=>{
+  let cur='topo';
+  for(const id of secs){
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top<160) cur=id;
+  }
+  document.querySelectorAll('.sb-item').forEach(a=>{
+    const href=a.getAttribute('href').replace('#','');
+    a.classList.toggle('active', href===cur || (cur==='topo'&&href==='topo'));
+  });
+},{passive:true});
+</script>
+</body>
+</html>
