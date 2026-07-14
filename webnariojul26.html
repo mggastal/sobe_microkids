@@ -112,6 +112,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .reg-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px;}
 .reg-v{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
 .reg-p{font-size:11px;color:var(--muted);margin-top:2px;}
+/* UF bars — leitura em coluna (ordem geral) */
+.uf-grid{display:grid;grid-auto-flow:column;grid-template-columns:1fr 1fr;gap:10px 28px;margin-top:14px;}
+.ufb{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:center;}
+.ufb-l{min-width:0;}
+.ufb-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;}
+.ufb-ddd{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .legend-note{display:flex;align-items:center;gap:9px;background:var(--accent-soft);border:1px solid rgba(173,150,220,.25);border-radius:9px;padding:9px 13px;margin-top:16px;font-size:11.5px;color:var(--text);}
 .legend-note svg{width:15px;height:15px;flex-shrink:0;color:var(--accent-2);}
 .legend-note b{color:var(--accent-2);}
@@ -132,6 +138,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   .hbar-lbl{font-size:11.5px;}
   .content{padding:16px;}
   .daily{gap:5px;}
+  .card{padding:16px 15px;}
+  /* estados empilhados (um abaixo do outro) e regiões em 2 colunas */
+  .uf-grid{grid-auto-flow:row!important;grid-template-columns:1fr!important;grid-template-rows:none!important;gap:11px;}
+  .ufb{grid-template-columns:118px 1fr;}
+  .geo-regions{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:480px){
+  .kpis{grid-template-columns:1fr;}
+  .hero{padding:20px 18px;}
+  .hero h1{font-size:19px;}
+  .hbar{grid-template-columns:96px 1fr;}
+  .ufb{grid-template-columns:104px 1fr;}
+  .hbar-lbl,.ufb-name{font-size:11px;}
+  .ufb-ddd{font-size:8.5px;}
+  .daily{height:170px;gap:3px;}
+  .dcol-lbl{font-size:9px;}
+  .geo-regions{grid-template-columns:1fr 1fr;gap:8px;}
+  .reg-v{font-size:17px;}
 }
 </style>
 </head>
@@ -258,8 +282,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
             <span class="card-tag" id="geoTag"></span>
           </div>
           <div class="geo-regions" id="regChart"></div>
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin:4px 0 2px">Por estado</div>
-          <div class="hbars cols2" id="ufChart"></div>
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin:4px 0 2px">Por estado · DDDs considerados</div>
+          <div class="uf-grid" id="ufChart"></div>
         </div>
       </div>
 
@@ -285,7 +309,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 </div>
 
 <script>
-const DATA = {"total": 373, "periodo": {"ini": "2026-07-08", "fim": "2026-07-14"}, "dias": 7, "profissoes": [{"label": "Professor(a) / Educador(a)", "value": 223}, {"label": "Coordenação / Supervisão", "value": 41}, {"label": "Direção e Gestão", "value": 30}, {"label": "Pedagogia / Orientação", "value": 29}, {"label": "Comercial / Outras áreas", "value": 13}, {"label": "Especialista / Consultoria", "value": 13}, {"label": "Estudante / Em formação", "value": 12}, {"label": "Não informado", "value": 7}, {"label": "Apoio / Administrativo", "value": 5}], "fontes": [{"label": "Meta Ads", "value": 321}, {"label": "Direto / Não rastreado", "value": 43}, {"label": "Google Ads", "value": 6}, {"label": "RD Station (e-mail)", "value": 3}], "posicionamentos": [{"label": "Instagram Feed", "value": 213}, {"label": "Não identificado", "value": 66}, {"label": "Instagram Stories", "value": 31}, {"label": "Instagram Reels", "value": 21}, {"label": "Facebook Mobile Feed", "value": 17}, {"label": "Facebook Mobile Reels", "value": 16}, {"label": "Facebook Stories", "value": 3}, {"label": "Facebook Desktop Feed", "value": 3}, {"label": "Facebook Instream Video", "value": 2}, {"label": "Threads Feed", "value": 1}], "conjuntos": [{"label": "Públicos quentes", "value": 146}, {"label": "Lookalike 1% · Leads", "value": 55}, {"label": "Interesses (cargos)", "value": 47}, {"label": "Lookalike 1% · Leads BET", "value": 27}, {"label": "Lookalike 1% · SINEPE", "value": 18}, {"label": "Lookalike 1% · 13º Congresso", "value": 17}], "campanhas": [{"label": "Webinário 01 · Captação", "value": 293}, {"label": "Não rastreado", "value": 43}, {"label": "PNLD 2027 · Captação", "value": 17}, {"label": "Não identificado", "value": 11}, {"label": "Performance Max", "value": 3}, {"label": "Search", "value": 3}, {"label": "Webinar (RD)", "value": 2}, {"label": "Errata (RD)", "value": 1}], "diario": [{"date": "2026-07-08", "value": 3}, {"date": "2026-07-09", "value": 45}, {"date": "2026-07-10", "value": 60}, {"date": "2026-07-11", "value": 75}, {"date": "2026-07-12", "value": 61}, {"date": "2026-07-13", "value": 100}, {"date": "2026-07-14", "value": 29}], "meta_total": 321, "prof_unicos_orig": 126, "geo": {"estados": [{"label": "São Paulo (SP)", "uf": "SP", "value": 58}, {"label": "Bahia (BA)", "uf": "BA", "value": 44}, {"label": "Rio de Janeiro (RJ)", "uf": "RJ", "value": 37}, {"label": "Minas Gerais (MG)", "uf": "MG", "value": 34}, {"label": "Paraná (PR)", "uf": "PR", "value": 25}, {"label": "Rio Grande do Sul (RS)", "uf": "RS", "value": 20}, {"label": "Pernambuco (PE)", "uf": "PE", "value": 17}, {"label": "Espírito Santo (ES)", "uf": "ES", "value": 16}, {"label": "Pará (PA)", "uf": "PA", "value": 16}, {"label": "Rondônia (RO)", "uf": "RO", "value": 15}, {"label": "Ceará (CE)", "uf": "CE", "value": 12}, {"label": "Rio Grande do Norte (RN)", "uf": "RN", "value": 11}, {"label": "Santa Catarina (SC)", "uf": "SC", "value": 9}, {"label": "Mato Grosso (MT)", "uf": "MT", "value": 8}, {"label": "Distrito Federal (DF)", "uf": "DF", "value": 7}, {"label": "Sergipe (SE)", "uf": "SE", "value": 6}, {"label": "Mato Grosso do Sul (MS)", "uf": "MS", "value": 6}, {"label": "Maranhão (MA)", "uf": "MA", "value": 6}, {"label": "Amazonas (AM)", "uf": "AM", "value": 5}, {"label": "Piauí (PI)", "uf": "PI", "value": 5}, {"label": "Alagoas (AL)", "uf": "AL", "value": 4}, {"label": "Goiás (GO)", "uf": "GO", "value": 4}, {"label": "Paraíba (PB)", "uf": "PB", "value": 2}, {"label": "Roraima (RR)", "uf": "RR", "value": 1}, {"label": "Acre (AC)", "uf": "AC", "value": 1}, {"label": "Tocantins (TO)", "uf": "TO", "value": 1}], "regioes": [{"label": "Sudeste", "value": 145}, {"label": "Nordeste", "value": 107}, {"label": "Sul", "value": 54}, {"label": "Norte", "value": 39}, {"label": "Centro-Oeste", "value": 25}], "sem_uf": 3, "com_uf": 370}};
+const DATA = {"total": 373, "periodo": {"ini": "2026-07-08", "fim": "2026-07-14"}, "dias": 7, "profissoes": [{"label": "Professor(a) / Educador(a)", "value": 223}, {"label": "Coordenação / Supervisão", "value": 41}, {"label": "Direção e Gestão", "value": 30}, {"label": "Pedagogia / Orientação", "value": 29}, {"label": "Comercial / Outras áreas", "value": 13}, {"label": "Especialista / Consultoria", "value": 13}, {"label": "Estudante / Em formação", "value": 12}, {"label": "Não informado", "value": 7}, {"label": "Apoio / Administrativo", "value": 5}], "fontes": [{"label": "Meta Ads", "value": 321}, {"label": "Direto / Não rastreado", "value": 43}, {"label": "Google Ads", "value": 6}, {"label": "RD Station (e-mail)", "value": 3}], "posicionamentos": [{"label": "Instagram Feed", "value": 213}, {"label": "Não identificado", "value": 66}, {"label": "Instagram Stories", "value": 31}, {"label": "Instagram Reels", "value": 21}, {"label": "Facebook Mobile Feed", "value": 17}, {"label": "Facebook Mobile Reels", "value": 16}, {"label": "Facebook Stories", "value": 3}, {"label": "Facebook Desktop Feed", "value": 3}, {"label": "Facebook Instream Video", "value": 2}, {"label": "Threads Feed", "value": 1}], "conjuntos": [{"label": "Públicos quentes", "value": 146}, {"label": "Lookalike 1% · Leads", "value": 55}, {"label": "Interesses (cargos)", "value": 47}, {"label": "Lookalike 1% · Leads BET", "value": 27}, {"label": "Lookalike 1% · SINEPE", "value": 18}, {"label": "Lookalike 1% · 13º Congresso", "value": 17}], "campanhas": [{"label": "Webinário 01 · Captação", "value": 293}, {"label": "Não rastreado", "value": 43}, {"label": "PNLD 2027 · Captação", "value": 17}, {"label": "Não identificado", "value": 11}, {"label": "Performance Max", "value": 3}, {"label": "Search", "value": 3}, {"label": "Webinar (RD)", "value": 2}, {"label": "Errata (RD)", "value": 1}], "diario": [{"date": "2026-07-08", "value": 3}, {"date": "2026-07-09", "value": 45}, {"date": "2026-07-10", "value": 60}, {"date": "2026-07-11", "value": 75}, {"date": "2026-07-12", "value": 61}, {"date": "2026-07-13", "value": 100}, {"date": "2026-07-14", "value": 29}], "meta_total": 321, "prof_unicos_orig": 126, "geo": {"estados": [{"label": "São Paulo (SP)", "uf": "SP", "value": 58, "ddds": ["11", "12", "13", "14", "15", "16", "17", "18", "19"]}, {"label": "Bahia (BA)", "uf": "BA", "value": 44, "ddds": ["71", "73", "74", "75", "77"]}, {"label": "Rio de Janeiro (RJ)", "uf": "RJ", "value": 37, "ddds": ["21", "22", "24"]}, {"label": "Minas Gerais (MG)", "uf": "MG", "value": 34, "ddds": ["31", "32", "33", "34", "35", "38"]}, {"label": "Paraná (PR)", "uf": "PR", "value": 25, "ddds": ["41", "42", "43", "44", "46"]}, {"label": "Rio Grande do Sul (RS)", "uf": "RS", "value": 20, "ddds": ["51", "53", "54", "55"]}, {"label": "Pernambuco (PE)", "uf": "PE", "value": 17, "ddds": ["81", "87"]}, {"label": "Espírito Santo (ES)", "uf": "ES", "value": 16, "ddds": ["27", "28"]}, {"label": "Pará (PA)", "uf": "PA", "value": 16, "ddds": ["91", "93", "94"]}, {"label": "Rondônia (RO)", "uf": "RO", "value": 15, "ddds": ["69"]}, {"label": "Ceará (CE)", "uf": "CE", "value": 12, "ddds": ["85", "88"]}, {"label": "Rio Grande do Norte (RN)", "uf": "RN", "value": 11, "ddds": ["84"]}, {"label": "Santa Catarina (SC)", "uf": "SC", "value": 9, "ddds": ["47", "48", "49"]}, {"label": "Mato Grosso (MT)", "uf": "MT", "value": 8, "ddds": ["65", "66"]}, {"label": "Distrito Federal (DF)", "uf": "DF", "value": 7, "ddds": ["61"]}, {"label": "Maranhão (MA)", "uf": "MA", "value": 6, "ddds": ["98", "99"]}, {"label": "Mato Grosso do Sul (MS)", "uf": "MS", "value": 6, "ddds": ["67"]}, {"label": "Sergipe (SE)", "uf": "SE", "value": 6, "ddds": ["79"]}, {"label": "Amazonas (AM)", "uf": "AM", "value": 5, "ddds": ["92"]}, {"label": "Piauí (PI)", "uf": "PI", "value": 5, "ddds": ["86", "89"]}, {"label": "Alagoas (AL)", "uf": "AL", "value": 4, "ddds": ["82"]}, {"label": "Goiás (GO)", "uf": "GO", "value": 4, "ddds": ["62", "64"]}, {"label": "Paraíba (PB)", "uf": "PB", "value": 2, "ddds": ["83"]}, {"label": "Acre (AC)", "uf": "AC", "value": 1, "ddds": ["68"]}, {"label": "Roraima (RR)", "uf": "RR", "value": 1, "ddds": ["95"]}, {"label": "Tocantins (TO)", "uf": "TO", "value": 1, "ddds": ["63"]}], "regioes": [{"label": "Sudeste", "value": 145}, {"label": "Nordeste", "value": 107}, {"label": "Sul", "value": 54}, {"label": "Norte", "value": 39}, {"label": "Centro-Oeste", "value": 25}], "sem_uf": 3, "com_uf": 370}};
 
 const fmt = n => n.toLocaleString('pt-BR');
 const pct = (n,t) => (100*n/t).toFixed(t? (100*n/t<10?1:0):0);
@@ -328,6 +352,21 @@ function renderDaily(){
 }
 
 /* HORIZONTAL BARS */
+function renderUF(elId, arr, opts){
+  const total=opts.total, max=arr[0].value, rows=Math.ceil(arr.length/2);
+  const el=document.getElementById(elId);
+  el.style.gridTemplateRows='repeat('+rows+',auto)';
+  el.innerHTML = arr.map(d=>{
+    const w=Math.max(2,(d.value/max)*100), p=pct(d.value,total), inside=w>26;
+    const num=`<div class="hbar-num ${inside?'inside':''}" style="${inside?'left:0':'left:'+w+'%'}">${fmt(d.value)} <span class="pct">${p}%</span></div>`;
+    const ddds=d.ddds.join(' · ');
+    return `<div class="ufb">
+      <div class="ufb-l"><div class="ufb-name">${d.label}</div><div class="ufb-ddd" title="DDD ${ddds}">DDD ${ddds}</div></div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:0;background:${opts.colorFn(d)}" data-w="${w}"></div>${num}</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>el.querySelectorAll('.hbar-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
 function renderBars(elId, arr, opts={}){
   const total = opts.total || arr.reduce((a,b)=>a+b.value,0);
   const max = Math.max(...arr.map(d=>d.value));
@@ -363,7 +402,7 @@ function init(){
     const c=REGCOLOR[r.label]||'var(--accent)';
     return `<div class="reg" style="--c:${c}"><div class="reg-n">${r.label}</div><div class="reg-v">${fmt(r.value)}</div><div class="reg-p">${pct(r.value,geoTot)}% dos leads</div></div>`;
   }).join('');
-  renderBars('ufChart', DATA.geo.estados, {total:geoTot,
+  renderUF('ufChart', DATA.geo.estados, {total:geoTot,
     colorFn:(d)=>{const REG={'SP':'Sudeste','RJ':'Sudeste','ES':'Sudeste','MG':'Sudeste','PR':'Sul','SC':'Sul','RS':'Sul','DF':'Centro-Oeste','GO':'Centro-Oeste','MT':'Centro-Oeste','MS':'Centro-Oeste','TO':'Norte','AC':'Norte','RO':'Norte','PA':'Norte','AM':'Norte','RR':'Norte','AP':'Norte','BA':'Nordeste','SE':'Nordeste','PE':'Nordeste','AL':'Nordeste','PB':'Nordeste','RN':'Nordeste','CE':'Nordeste','PI':'Nordeste','MA':'Nordeste'};return REGCOLOR[REG[d.uf]]||'var(--accent)';}});
 
 }
