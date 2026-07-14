@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microkids · Leads do Webinário</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f2f7;--surface:#fff;--surface2:#f7f8fc;--border:rgba(0,0,0,.07);
+  --text:#0f1523;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#AD96DC;--accent-2:#8b6fc9;--accent-soft:rgba(173,150,220,.14);
+  --meta:#0866FF;--google:#1a73e8;--rd:#4A9;--cyan:#00AEEF;
+  --sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 6px 24px rgba(15,21,35,.08);--r:12px;
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--border:rgba(255,255,255,.08);
+  --text:#f0f4ff;--muted:#8b95a9;--muted2:#5a6478;--accent-soft:rgba(173,150,220,.16);
+  --sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 8px 30px rgba(0,0,0,.4);
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh;align-items:start;}
+
+/* SIDEBAR */
+.sb{background:#0f1523;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:11px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-box{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f1523;flex-shrink:0;background:var(--accent);font-size:15px;}
+.logo-name{font-size:14px;font-weight:700;color:#fff;line-height:1;}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;}
+.sb-section{padding:14px 10px;}
+.sb-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px 6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.5);font-size:12.5px;font-weight:500;transition:all .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.sb-item.active{background:var(--accent-soft);color:#fff;}
+.sb-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--accent);}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.05);}
+.sb-footer span{font-size:10px;color:rgba(255,255,255,.28);display:block;line-height:1.5;}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:9000;box-shadow:0 2px 10px rgba(0,0,0,.05);gap:10px;flex-wrap:wrap;}
+.tb-l{display:flex;align-items:center;gap:12px;min-width:0;}
+.mob-menu{display:none;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;}
+.page-title{font-weight:700;font-size:16px;}
+.tb-badge{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-2);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;}
+.tb-badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(173,150,220,.5);}70%{box-shadow:0 0 0 7px rgba(173,150,220,0);}100%{box-shadow:0 0 0 0 rgba(173,150,220,0);}}
+.theme-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;}
+
+.content{padding:24px;max-width:1140px;width:100%;margin:0 auto;}
+
+/* HERO */
+.hero{position:relative;border-radius:16px;overflow:hidden;padding:26px 30px;margin-bottom:22px;background:linear-gradient(135deg,#0f1523 0%,#1b2540 55%,#2a2350 100%);box-shadow:var(--sh2);}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 12%,rgba(0,174,239,.30),transparent 42%),radial-gradient(circle at 10% 95%,rgba(173,150,220,.34),transparent 50%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9b6f0;margin-bottom:10px;}
+.hero-eyebrow .tag{background:rgba(173,150,220,.18);border:1px solid rgba(173,150,220,.35);border-radius:6px;padding:3px 8px;letter-spacing:1px;}
+.hero h1{font-weight:700;font-size:23px;line-height:1.2;color:#fff;max-width:620px;margin-bottom:6px;}
+.hero p{color:rgba(255,255,255,.6);font-size:13px;max-width:560px;line-height:1.6;}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 17px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);}
+.kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px;}
+.kpi-val{font-size:26px;font-weight:700;line-height:1;font-family:'DM Mono',monospace;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:6px;}
+.kpi-sub b{color:var(--accent-2);font-weight:600;}
+
+/* SECTION / CARD */
+.sec{margin-bottom:24px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);padding:20px 22px;}
+.card-hd{display:flex;align-items:flex-start;gap:11px;margin-bottom:4px;}
+.card-ico{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent-2);}
+.card-ico svg{width:18px;height:18px;}
+.card-t{font-weight:700;font-size:15px;line-height:1.15;}
+.card-s{font-size:12px;color:var(--muted);margin-top:2px;}
+.card-tag{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:20px;padding:4px 11px;white-space:nowrap;}
+
+/* DAILY BARS */
+.daily{display:flex;align-items:flex-end;gap:10px;height:200px;padding:20px 4px 0;}
+.dcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px;}
+.dbar-wrap{width:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;}
+.dbar{width:70%;max-width:46px;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent-2));position:relative;transition:height .6s cubic-bezier(.2,.8,.2,1);min-height:3px;}
+.dbar.partial{background:repeating-linear-gradient(45deg,var(--accent) 0 6px,var(--accent-2) 6px 12px);opacity:.7;}
+.dbar-v{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text);}
+.dcol-lbl{font-size:10px;color:var(--muted);text-align:center;line-height:1.3;font-weight:600;}
+.dcol-lbl small{display:block;color:var(--muted2);font-weight:500;font-size:9px;}
+
+/* H-BARS */
+.hbars{display:flex;flex-direction:column;gap:11px;margin-top:16px;}
+.hbar{display:grid;grid-template-columns:190px 1fr;gap:12px;align-items:center;}
+.hbar-lbl{font-size:12.5px;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hbar-track{position:relative;height:26px;background:var(--surface2);border-radius:7px;overflow:hidden;}
+.hbar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;display:flex;align-items:center;transition:width .7s cubic-bezier(.2,.8,.2,1);min-width:3px;}
+.hbar-num{position:absolute;top:0;bottom:0;display:flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding-left:10px;white-space:nowrap;}
+.hbar-num .pct{color:var(--muted);font-size:11px;}
+.hbar-num.inside{color:#fff;}
+.hbar-num.inside .pct{color:rgba(255,255,255,.8);}
+
+/* two-col grid for smaller cards */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid2 .hbar{grid-template-columns:150px 1fr;}
+.grid2 .hbar-lbl{font-size:12px;}
+
+.hbars.cols2{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin-top:16px;}
+.hbars.cols2 .hbar{grid-template-columns:130px 1fr;}
+.geo-regions{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.reg{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px 13px;position:relative;overflow:hidden;}
+.reg::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);}
+.reg-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px;}
+.reg-v{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
+.reg-p{font-size:11px;color:var(--muted);margin-top:2px;}
+.legend-note{display:flex;align-items:center;gap:9px;background:var(--accent-soft);border:1px solid rgba(173,150,220,.25);border-radius:9px;padding:9px 13px;margin-top:16px;font-size:11.5px;color:var(--text);}
+.legend-note svg{width:15px;height:15px;flex-shrink:0;color:var(--accent-2);}
+.legend-note b{color:var(--accent-2);}
+.dash-note{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:14px;}
+.dash-note i{width:14px;height:10px;border-radius:2px;background:repeating-linear-gradient(45deg,var(--accent) 0 5px,var(--accent-2) 5px 10px);opacity:.7;display:inline-block;}
+
+.pagefoot{text-align:center;padding:24px 0 8px;color:var(--muted2);font-size:11px;}
+.pagefoot b{color:var(--accent-2);}
+
+@media(max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sb{position:fixed;left:-220px;width:210px;z-index:9500;transition:left .25s;box-shadow:0 0 30px rgba(0,0,0,.4);}
+  .sb.open{left:0;}
+  .mob-menu{display:block;}
+  .kpis{grid-template-columns:repeat(2,1fr);}
+  .grid2{grid-template-columns:1fr;}
+  .hbar{grid-template-columns:120px 1fr;}
+  .hbar-lbl{font-size:11.5px;}
+  .content{padding:16px;}
+  .daily{gap:5px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sb" id="sidebar">
+    <div class="sb-logo">
+      <div class="logo-box">MK</div>
+      <div>
+        <div class="logo-name">Microkids</div>
+        <div class="logo-sub">Sobé Estratégias</div>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">Leads · Webinário</div>
+      <a href="#topo" class="sb-item active" onclick="closeSb()"><span class="dot"></span>Visão geral</a>
+      <a href="#diario" class="sb-item" onclick="closeSb()"><span class="dot"></span>Leads por dia</a>
+      <a href="#prof" class="sb-item" onclick="closeSb()"><span class="dot"></span>Profissões</a>
+      <a href="#origem" class="sb-item" onclick="closeSb()"><span class="dot"></span>Origem &amp; canal</a>
+      <a href="#geo" class="sb-item" onclick="closeSb()"><span class="dot"></span>Localização (DDD)</a>
+      <a href="#conjuntos" class="sb-item" onclick="closeSb()"><span class="dot"></span>Conjuntos Meta</a>
+    </div>
+    <div class="sb-footer">
+      <span>Relatório de captação</span>
+      <span id="footPeriod">Jul/2026</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-l">
+        <button class="mob-menu" onclick="toggleSb()">☰</button>
+        <div class="page-title">Leads do Webinário</div>
+        <span class="tb-badge"><span class="pulse"></span><span id="badgeTotal">— leads</span></span>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Escuro</span></button>
+    </div>
+
+    <div class="content" id="topo">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag">PNLD 2027 · Anos Iniciais</span> Captação de leads</div>
+          <h1>Webinar · Educação Digital e Midiática: muito além das telas</h1>
+          <p>Panorama dos inscritos captados para o webinar de 23/07, com o perfil profissional consolidado e a origem de cada lead.</p>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpis" id="kpis"></div>
+
+      <!-- DAILY -->
+      <div class="sec" id="diario">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div>
+              <div class="card-t">Leads por dia</div>
+              <div class="card-s">Volume diário de inscrições no período</div>
+            </div>
+            <span class="card-tag" id="dailyTag"></span>
+          </div>
+          <div class="daily" id="dailyChart"></div>
+          <div class="dash-note"><i></i> Dia parcial (coleta em andamento)</div>
+        </div>
+      </div>
+
+      <!-- PROFISSÕES -->
+      <div class="sec" id="prof">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div>
+              <div class="card-t">Perfil profissional dos leads</div>
+              <div class="card-s">Cargos informados, agrupados por área de atuação</div>
+            </div>
+            <span class="card-tag">9 grupos</span>
+          </div>
+          <div class="hbars" id="profChart"></div>
+          <div class="legend-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <span>Os <b>126 cargos</b> escritos livremente foram consolidados em <b>9 grupos</b> — variações como "professor", "professora", "Prof." e "docente" somam em <b>Professor(a) / Educador(a)</b>.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORIGEM + POSICIONAMENTO -->
+      <div class="sec" id="origem">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+              <div>
+                <div class="card-t">Origem do lead</div>
+                <div class="card-s">Plataforma de captação</div>
+              </div>
+            </div>
+            <div class="hbars" id="fontesChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              <div>
+                <div class="card-t">Posicionamento</div>
+                <div class="card-s">Onde o anúncio foi clicado</div>
+              </div>
+            </div>
+            <div class="hbars" id="placeChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GEO -->
+      <div class="sec" id="geo">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div>
+              <div class="card-t">Distribuição geográfica</div>
+              <div class="card-s">Localização estimada pelo DDD do telefone</div>
+            </div>
+            <span class="card-tag" id="geoTag"></span>
+          </div>
+          <div class="geo-regions" id="regChart"></div>
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin:4px 0 2px">Por estado</div>
+          <div class="hbars cols2" id="ufChart"></div>
+        </div>
+      </div>
+
+      <!-- CONJUNTOS -->
+      <div class="sec" id="conjuntos">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+            <div>
+              <div class="card-t">Conjuntos de anúncios · Meta Ads</div>
+              <div class="card-s">Leads por público segmentado</div>
+            </div>
+            <span class="card-tag" id="metaTag"></span>
+          </div>
+          <div class="hbars" id="adsetChart"></div>
+        </div>
+      </div>
+
+      <div class="pagefoot">Desenvolvido por <b>Sobé Estratégias</b> · Relatório de captação — Microkids</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"total": 373, "periodo": {"ini": "2026-07-08", "fim": "2026-07-14"}, "dias": 7, "profissoes": [{"label": "Professor(a) / Educador(a)", "value": 223}, {"label": "Coordenação / Supervisão", "value": 41}, {"label": "Direção e Gestão", "value": 30}, {"label": "Pedagogia / Orientação", "value": 29}, {"label": "Comercial / Outras áreas", "value": 13}, {"label": "Especialista / Consultoria", "value": 13}, {"label": "Estudante / Em formação", "value": 12}, {"label": "Não informado", "value": 7}, {"label": "Apoio / Administrativo", "value": 5}], "fontes": [{"label": "Meta Ads", "value": 321}, {"label": "Direto / Não rastreado", "value": 43}, {"label": "Google Ads", "value": 6}, {"label": "RD Station (e-mail)", "value": 3}], "posicionamentos": [{"label": "Instagram Feed", "value": 213}, {"label": "Não identificado", "value": 66}, {"label": "Instagram Stories", "value": 31}, {"label": "Instagram Reels", "value": 21}, {"label": "Facebook Mobile Feed", "value": 17}, {"label": "Facebook Mobile Reels", "value": 16}, {"label": "Facebook Stories", "value": 3}, {"label": "Facebook Desktop Feed", "value": 3}, {"label": "Facebook Instream Video", "value": 2}, {"label": "Threads Feed", "value": 1}], "conjuntos": [{"label": "Públicos quentes", "value": 146}, {"label": "Lookalike 1% · Leads", "value": 55}, {"label": "Interesses (cargos)", "value": 47}, {"label": "Lookalike 1% · Leads BET", "value": 27}, {"label": "Lookalike 1% · SINEPE", "value": 18}, {"label": "Lookalike 1% · 13º Congresso", "value": 17}], "campanhas": [{"label": "Webinário 01 · Captação", "value": 293}, {"label": "Não rastreado", "value": 43}, {"label": "PNLD 2027 · Captação", "value": 17}, {"label": "Não identificado", "value": 11}, {"label": "Performance Max", "value": 3}, {"label": "Search", "value": 3}, {"label": "Webinar (RD)", "value": 2}, {"label": "Errata (RD)", "value": 1}], "diario": [{"date": "2026-07-08", "value": 3}, {"date": "2026-07-09", "value": 45}, {"date": "2026-07-10", "value": 60}, {"date": "2026-07-11", "value": 75}, {"date": "2026-07-12", "value": 61}, {"date": "2026-07-13", "value": 100}, {"date": "2026-07-14", "value": 29}], "meta_total": 321, "prof_unicos_orig": 126, "geo": {"estados": [{"label": "São Paulo (SP)", "uf": "SP", "value": 58}, {"label": "Bahia (BA)", "uf": "BA", "value": 44}, {"label": "Rio de Janeiro (RJ)", "uf": "RJ", "value": 37}, {"label": "Minas Gerais (MG)", "uf": "MG", "value": 34}, {"label": "Paraná (PR)", "uf": "PR", "value": 25}, {"label": "Rio Grande do Sul (RS)", "uf": "RS", "value": 20}, {"label": "Pernambuco (PE)", "uf": "PE", "value": 17}, {"label": "Espírito Santo (ES)", "uf": "ES", "value": 16}, {"label": "Pará (PA)", "uf": "PA", "value": 16}, {"label": "Rondônia (RO)", "uf": "RO", "value": 15}, {"label": "Ceará (CE)", "uf": "CE", "value": 12}, {"label": "Rio Grande do Norte (RN)", "uf": "RN", "value": 11}, {"label": "Santa Catarina (SC)", "uf": "SC", "value": 9}, {"label": "Mato Grosso (MT)", "uf": "MT", "value": 8}, {"label": "Distrito Federal (DF)", "uf": "DF", "value": 7}, {"label": "Sergipe (SE)", "uf": "SE", "value": 6}, {"label": "Mato Grosso do Sul (MS)", "uf": "MS", "value": 6}, {"label": "Maranhão (MA)", "uf": "MA", "value": 6}, {"label": "Amazonas (AM)", "uf": "AM", "value": 5}, {"label": "Piauí (PI)", "uf": "PI", "value": 5}, {"label": "Alagoas (AL)", "uf": "AL", "value": 4}, {"label": "Goiás (GO)", "uf": "GO", "value": 4}, {"label": "Paraíba (PB)", "uf": "PB", "value": 2}, {"label": "Roraima (RR)", "uf": "RR", "value": 1}, {"label": "Acre (AC)", "uf": "AC", "value": 1}, {"label": "Tocantins (TO)", "uf": "TO", "value": 1}], "regioes": [{"label": "Sudeste", "value": 145}, {"label": "Nordeste", "value": 107}, {"label": "Sul", "value": 54}, {"label": "Norte", "value": 39}, {"label": "Centro-Oeste", "value": 25}], "sem_uf": 3, "com_uf": 370}};
+
+const fmt = n => n.toLocaleString('pt-BR');
+const pct = (n,t) => (100*n/t).toFixed(t? (100*n/t<10?1:0):0);
+const shortDate = iso => { const [y,m,d]=iso.split('-'); const wd=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'][new Date(iso+'T12:00').getDay()]; return {d:`${d}/${m}`, wd}; };
+
+/* KPIs */
+function renderKpis(){
+  const t=DATA.total, meta=DATA.meta_total;
+  const prof=DATA.profissoes[0].value;
+  const media=Math.round(t/DATA.dias);
+  const pi=shortDate(DATA.periodo.ini), pf=shortDate(DATA.periodo.fim);
+  const kpis=[
+    {l:'Total de leads', v:fmt(t), s:`captados no período`},
+    {l:'Período', v:`${DATA.dias} dias`, s:`${pi.d} a ${pf.d} · jul`},
+    {l:'Média por dia', v:fmt(media), s:`leads/dia`},
+    {l:'Via Meta Ads', v:fmt(meta), s:`<b>${pct(meta,t)}%</b> do total`},
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(k=>`
+    <div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+  document.getElementById('badgeTotal').textContent = `${fmt(t)} leads`;
+  document.getElementById('footPeriod').textContent = `${pi.d}–${pf.d} jul/2026`;
+  document.getElementById('dailyTag').textContent = `${fmt(t)} no total`;
+  document.getElementById('metaTag').textContent = `${fmt(meta)} leads Meta`;
+}
+
+/* DAILY */
+function renderDaily(){
+  const max=Math.max(...DATA.diario.map(d=>d.value));
+  const last=DATA.diario.length-1;
+  document.getElementById('dailyChart').innerHTML = DATA.diario.map((d,i)=>{
+    const h=Math.max(4,(d.value/max)*100);
+    const sd=shortDate(d.date);
+    const partial = i===last ? ' partial' : '';
+    return `<div class="dcol">
+      <div class="dbar-wrap"><div class="dbar${partial}" style="height:0" data-h="${h}"><span class="dbar-v">${d.value}</span></div></div>
+      <div class="dcol-lbl">${sd.d}<small>${sd.wd}</small></div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('.dbar').forEach(b=>b.style.height=b.dataset.h+'%'));
+}
+
+/* HORIZONTAL BARS */
+function renderBars(elId, arr, opts={}){
+  const total = opts.total || arr.reduce((a,b)=>a+b.value,0);
+  const max = Math.max(...arr.map(d=>d.value));
+  const grad = opts.grad || 'linear-gradient(90deg,var(--accent-2),var(--accent))';
+  document.getElementById(elId).innerHTML = arr.map((d,i)=>{
+    const w=Math.max(2,(d.value/max)*100);
+    const p=pct(d.value,total);
+    const color = opts.colorFn ? opts.colorFn(d,i) : grad;
+    const inside = w>26;
+    const num = `<div class="hbar-num ${inside?'inside':''}" style="${inside?'left:0':'left:'+w+'%'}">${fmt(d.value)} <span class="pct">${p}%</span></div>`;
+    return `<div class="hbar">
+      <div class="hbar-lbl" title="${d.label}">${d.label}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:0;background:${color}" data-w="${w}"></div>${num}</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#'+elId+' .hbar-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+
+function init(){
+  renderKpis();
+  renderDaily();
+  renderBars('profChart', DATA.profissoes, {total:DATA.total,
+    colorFn:(d,i)=> i===0 ? 'linear-gradient(90deg,#8b6fc9,#AD96DC)' : `linear-gradient(90deg,rgba(139,111,201,${0.85-i*0.07}),rgba(173,150,220,${0.9-i*0.07}))`});
+  renderBars('fontesChart', DATA.fontes, {total:DATA.total,
+    colorFn:d=>({'Meta Ads':'linear-gradient(90deg,#0866FF,#3d8bff)','Google Ads':'linear-gradient(90deg,#1a73e8,#4a9)','RD Station (e-mail)':'linear-gradient(90deg,#00b894,#55d6b0)','Direto / Não rastreado':'linear-gradient(90deg,#9ca3af,#c4cad4)'}[d.label]||'var(--accent)')});
+  renderBars('placeChart', DATA.posicionamentos, {total:DATA.total});
+  renderBars('adsetChart', DATA.conjuntos, {total:DATA.meta_total});
+  // GEO
+  const REGCOLOR={'Sudeste':'#AD96DC','Nordeste':'#E5904D','Sul':'#3F9E8F','Norte':'#5B8DEF','Centro-Oeste':'#C77DFF'};
+  const geoTot=DATA.geo.com_uf;
+  document.getElementById('geoTag').textContent = `${fmt(geoTot)} com DDD · ${DATA.geo.estados.length} estados`;
+  document.getElementById('regChart').innerHTML = DATA.geo.regioes.map(r=>{
+    const c=REGCOLOR[r.label]||'var(--accent)';
+    return `<div class="reg" style="--c:${c}"><div class="reg-n">${r.label}</div><div class="reg-v">${fmt(r.value)}</div><div class="reg-p">${pct(r.value,geoTot)}% dos leads</div></div>`;
+  }).join('');
+  renderBars('ufChart', DATA.geo.estados, {total:geoTot,
+    colorFn:(d)=>{const REG={'SP':'Sudeste','RJ':'Sudeste','ES':'Sudeste','MG':'Sudeste','PR':'Sul','SC':'Sul','RS':'Sul','DF':'Centro-Oeste','GO':'Centro-Oeste','MT':'Centro-Oeste','MS':'Centro-Oeste','TO':'Norte','AC':'Norte','RO':'Norte','PA':'Norte','AM':'Norte','RR':'Norte','AP':'Norte','BA':'Nordeste','SE':'Nordeste','PE':'Nordeste','AL':'Nordeste','PB':'Nordeste','RN':'Nordeste','CE':'Nordeste','PI':'Nordeste','MA':'Nordeste'};return REGCOLOR[REG[d.uf]]||'var(--accent)';}});
+
+}
+
+function toggleTheme(){
+  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';
+  document.getElementById('themeLabel').textContent=dark?'Escuro':'Claro';
+}
+function toggleSb(){document.getElementById('sidebar').classList.toggle('open');}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');}
+const secs=['topo','diario','prof','origem','geo','conjuntos'];
+window.addEventListener('scroll',()=>{
+  let cur='topo';
+  for(const id of secs){const el=document.getElementById(id); if(el && el.getBoundingClientRect().top<170) cur=id;}
+  document.querySelectorAll('.sb-item').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+},{passive:true});
+
+init();
+</script>
+</body>
+</html>
