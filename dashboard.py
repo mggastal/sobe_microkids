@@ -47,8 +47,8 @@ CR_BOM           = 68.0
 CR_MEDIO         = 60.0
 TX_CONV_BOM      = 3.0
 TX_CONV_MEDIO    = 2.0
-CPM_BOM          = 5.0
-CPM_MEDIO        = 12.0
+CPM_BOM          = 35.0
+CPM_MEDIO        = 50.0
 
 # ══════════════════════════════════════════════════════
 def sheet_url(t): return f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={t}"
