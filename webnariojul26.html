@@ -79,8 +79,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .card-tag{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:20px;padding:4px 11px;white-space:nowrap;}
 
 /* DAILY BARS */
-.daily{display:flex;align-items:flex-end;gap:10px;height:200px;padding:20px 4px 0;}
-.dcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px;}
+.daily{display:flex;align-items:flex-end;gap:10px;height:200px;padding:20px 4px 6px;overflow-x:auto;overflow-y:hidden;}
+.dcol{flex:1;min-width:34px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px;}
 .dbar-wrap{width:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;}
 .dbar{width:70%;max-width:46px;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent-2));position:relative;transition:height .6s cubic-bezier(.2,.8,.2,1);min-height:3px;}
 .dbar.partial{background:repeating-linear-gradient(45deg,var(--accent) 0 6px,var(--accent-2) 6px 12px);opacity:.7;}
@@ -127,6 +127,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .pagefoot{text-align:center;padding:24px 0 8px;color:var(--muted2);font-size:11px;}
 .pagefoot b{color:var(--accent-2);}
 
+/* Tabelas de UTM */
+.tab-wrap{overflow-x:auto;margin-top:14px;}
+.utab{width:100%;border-collapse:collapse;font-size:12.5px;min-width:420px;}
+.utab th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;padding:0 10px 9px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.utab th.r,.utab td.r{text-align:right;}
+.utab td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.utab tbody tr:last-child td{border-bottom:none;}
+.utab tbody tr:hover{background:var(--surface2);}
+.utab td.utm{font-family:'DM Mono',monospace;font-size:11.5px;word-break:break-word;}
+.utab td.num{font-family:'DM Mono',monospace;font-weight:500;white-space:nowrap;}
+.utab td.pctc{color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap;}
+.src-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px;white-space:nowrap;}
+.src-meta{background:rgba(8,102,255,.12);color:var(--meta);}
+.src-google{background:rgba(26,115,232,.13);color:var(--google);}
+.src-rd{background:rgba(46,139,118,.14);color:#2e8b76;}
+.src-direto{background:var(--surface2);color:var(--muted);}
+.src-outro{background:var(--surface2);color:var(--muted2);}
+.mt20{margin-top:20px;}
 @media(max-width:860px){
   .app{grid-template-columns:1fr;}
   .sb{position:fixed;left:-220px;width:210px;z-index:9500;transition:left .25s;box-shadow:0 0 30px rgba(0,0,0,.4);}
@@ -177,7 +195,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <a href="#prof" class="sb-item" onclick="closeSb()"><span class="dot"></span>Profissões</a>
       <a href="#origem" class="sb-item" onclick="closeSb()"><span class="dot"></span>Origem &amp; canal</a>
       <a href="#geo" class="sb-item" onclick="closeSb()"><span class="dot"></span>Localização (DDD)</a>
-      <a href="#conjuntos" class="sb-item" onclick="closeSb()"><span class="dot"></span>Conjuntos Meta</a>
+      <a href="#conjuntos" class="sb-item" onclick="closeSb()"><span class="dot"></span>Campanhas &amp; UTMs</a>
     </div>
     <div class="sb-footer">
       <span>Relatório de captação</span>
@@ -202,7 +220,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <div class="hero-inner">
           <div class="hero-eyebrow"><span class="tag">PNLD 2027 · Anos Iniciais</span> Captação de leads</div>
           <h1>Webinar · Educação Digital e Midiática: muito além das telas</h1>
-          <p>Panorama dos inscritos captados para o webinar de 23/07, com o perfil profissional consolidado e a origem de cada lead.</p>
+          <p>Panorama dos inscritos do webinar de 23/07 — perfil profissional, origem e análise de UTMs. <b style="color:#c9b6f0">Leads contabilizados até 23/07 (dia do evento)</b>.</p>
         </div>
       </div>
 
@@ -216,12 +234,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
             <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
             <div>
               <div class="card-t">Leads por dia</div>
-              <div class="card-s">Volume diário de inscrições no período</div>
+              <div class="card-s">Volume diário até 23/07 · dia do webinar</div>
             </div>
             <span class="card-tag" id="dailyTag"></span>
           </div>
           <div class="daily" id="dailyChart"></div>
-          <div class="dash-note"><i></i> Dia parcial (coleta em andamento)</div>
+          <div class="dash-note" id="dashNote"><i></i> Dia parcial (coleta em andamento)</div>
         </div>
       </div>
 
@@ -302,6 +320,51 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         </div>
       </div>
 
+      <!-- GOOGLE campanhas -->
+      <div class="sec">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico" style="background:#fff;border:1px solid var(--border);padding:6px"><svg viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg></div>
+            <div>
+              <div class="card-t">Campanhas · Google Ads</div>
+              <div class="card-s">Leads por tipo de campanha</div>
+            </div>
+            <span class="card-tag" id="googleTag"></span>
+          </div>
+          <div class="hbars" id="googleChart"></div>
+        </div>
+      </div>
+
+      <!-- utm_campaign table -->
+      <div class="sec">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+            <div>
+              <div class="card-t">Leads por <span style="font-family:'DM Mono',monospace">utm_campaign</span></div>
+              <div class="card-s">Todas as campanhas, Meta e Google separadas por origem</div>
+            </div>
+            <span class="card-tag" id="campTabTag"></span>
+          </div>
+          <div class="tab-wrap"><table class="utab" id="campTab"></table></div>
+        </div>
+      </div>
+
+      <!-- utm_medium table -->
+      <div class="sec">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+            <div>
+              <div class="card-t">Leads por <span style="font-family:'DM Mono',monospace">utm_medium</span></div>
+              <div class="card-s">Conjuntos Meta, mídias Google e fluxos de e-mail (RD)</div>
+            </div>
+            <span class="card-tag" id="medTabTag"></span>
+          </div>
+          <div class="tab-wrap"><table class="utab" id="medTab"></table></div>
+        </div>
+      </div>
+
       <div class="pagefoot">Desenvolvido por <b>Sobé Estratégias</b> · Relatório de captação — Microkids</div>
 
     </div>
@@ -309,7 +372,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 </div>
 
 <script>
-const DATA = {"total": 373, "periodo": {"ini": "2026-07-08", "fim": "2026-07-14"}, "dias": 7, "profissoes": [{"label": "Professor(a) / Educador(a)", "value": 223}, {"label": "Coordenação / Supervisão", "value": 41}, {"label": "Direção e Gestão", "value": 30}, {"label": "Pedagogia / Orientação", "value": 29}, {"label": "Comercial / Outras áreas", "value": 13}, {"label": "Especialista / Consultoria", "value": 13}, {"label": "Estudante / Em formação", "value": 12}, {"label": "Não informado", "value": 7}, {"label": "Apoio / Administrativo", "value": 5}], "fontes": [{"label": "Meta Ads", "value": 321}, {"label": "Direto / Não rastreado", "value": 43}, {"label": "Google Ads", "value": 6}, {"label": "RD Station (e-mail)", "value": 3}], "posicionamentos": [{"label": "Instagram Feed", "value": 213}, {"label": "Não identificado", "value": 66}, {"label": "Instagram Stories", "value": 31}, {"label": "Instagram Reels", "value": 21}, {"label": "Facebook Mobile Feed", "value": 17}, {"label": "Facebook Mobile Reels", "value": 16}, {"label": "Facebook Stories", "value": 3}, {"label": "Facebook Desktop Feed", "value": 3}, {"label": "Facebook Instream Video", "value": 2}, {"label": "Threads Feed", "value": 1}], "conjuntos": [{"label": "Públicos quentes", "value": 146}, {"label": "Lookalike 1% · Leads", "value": 55}, {"label": "Interesses (cargos)", "value": 47}, {"label": "Lookalike 1% · Leads BET", "value": 27}, {"label": "Lookalike 1% · SINEPE", "value": 18}, {"label": "Lookalike 1% · 13º Congresso", "value": 17}], "campanhas": [{"label": "Webinário 01 · Captação", "value": 293}, {"label": "Não rastreado", "value": 43}, {"label": "PNLD 2027 · Captação", "value": 17}, {"label": "Não identificado", "value": 11}, {"label": "Performance Max", "value": 3}, {"label": "Search", "value": 3}, {"label": "Webinar (RD)", "value": 2}, {"label": "Errata (RD)", "value": 1}], "diario": [{"date": "2026-07-08", "value": 3}, {"date": "2026-07-09", "value": 45}, {"date": "2026-07-10", "value": 60}, {"date": "2026-07-11", "value": 75}, {"date": "2026-07-12", "value": 61}, {"date": "2026-07-13", "value": 100}, {"date": "2026-07-14", "value": 29}], "meta_total": 321, "prof_unicos_orig": 126, "geo": {"estados": [{"label": "São Paulo (SP)", "uf": "SP", "value": 58, "ddds": ["11", "12", "13", "14", "15", "16", "17", "18", "19"]}, {"label": "Bahia (BA)", "uf": "BA", "value": 44, "ddds": ["71", "73", "74", "75", "77"]}, {"label": "Rio de Janeiro (RJ)", "uf": "RJ", "value": 37, "ddds": ["21", "22", "24"]}, {"label": "Minas Gerais (MG)", "uf": "MG", "value": 34, "ddds": ["31", "32", "33", "34", "35", "38"]}, {"label": "Paraná (PR)", "uf": "PR", "value": 25, "ddds": ["41", "42", "43", "44", "46"]}, {"label": "Rio Grande do Sul (RS)", "uf": "RS", "value": 20, "ddds": ["51", "53", "54", "55"]}, {"label": "Pernambuco (PE)", "uf": "PE", "value": 17, "ddds": ["81", "87"]}, {"label": "Espírito Santo (ES)", "uf": "ES", "value": 16, "ddds": ["27", "28"]}, {"label": "Pará (PA)", "uf": "PA", "value": 16, "ddds": ["91", "93", "94"]}, {"label": "Rondônia (RO)", "uf": "RO", "value": 15, "ddds": ["69"]}, {"label": "Ceará (CE)", "uf": "CE", "value": 12, "ddds": ["85", "88"]}, {"label": "Rio Grande do Norte (RN)", "uf": "RN", "value": 11, "ddds": ["84"]}, {"label": "Santa Catarina (SC)", "uf": "SC", "value": 9, "ddds": ["47", "48", "49"]}, {"label": "Mato Grosso (MT)", "uf": "MT", "value": 8, "ddds": ["65", "66"]}, {"label": "Distrito Federal (DF)", "uf": "DF", "value": 7, "ddds": ["61"]}, {"label": "Maranhão (MA)", "uf": "MA", "value": 6, "ddds": ["98", "99"]}, {"label": "Mato Grosso do Sul (MS)", "uf": "MS", "value": 6, "ddds": ["67"]}, {"label": "Sergipe (SE)", "uf": "SE", "value": 6, "ddds": ["79"]}, {"label": "Amazonas (AM)", "uf": "AM", "value": 5, "ddds": ["92"]}, {"label": "Piauí (PI)", "uf": "PI", "value": 5, "ddds": ["86", "89"]}, {"label": "Alagoas (AL)", "uf": "AL", "value": 4, "ddds": ["82"]}, {"label": "Goiás (GO)", "uf": "GO", "value": 4, "ddds": ["62", "64"]}, {"label": "Paraíba (PB)", "uf": "PB", "value": 2, "ddds": ["83"]}, {"label": "Acre (AC)", "uf": "AC", "value": 1, "ddds": ["68"]}, {"label": "Roraima (RR)", "uf": "RR", "value": 1, "ddds": ["95"]}, {"label": "Tocantins (TO)", "uf": "TO", "value": 1, "ddds": ["63"]}], "regioes": [{"label": "Sudeste", "value": 145}, {"label": "Nordeste", "value": 107}, {"label": "Sul", "value": 54}, {"label": "Norte", "value": 39}, {"label": "Centro-Oeste", "value": 25}], "sem_uf": 3, "com_uf": 370}};
+const DATA = {"total": 1986, "periodo": {"ini": "2026-07-08", "fim": "2026-07-23"}, "dias": 16, "profissoes": [{"label": "Professor(a) / Educador(a)", "value": 1240}, {"label": "Coordenação / Supervisão", "value": 200}, {"label": "Direção e Gestão", "value": 177}, {"label": "Outras áreas", "value": 111}, {"label": "Pedagogia / Orientação", "value": 99}, {"label": "Apoio / Administrativo", "value": 54}, {"label": "Estudante / Em formação", "value": 46}, {"label": "Especialista / Consultoria", "value": 34}, {"label": "Não informado", "value": 25}], "fontes": [{"label": "Meta Ads", "value": 1064}, {"label": "Direto / Não rastreado", "value": 612}, {"label": "Google Ads", "value": 206}, {"label": "RD Station (e-mail)", "value": 85}, {"label": "LPPNLD", "value": 17}, {"label": "ig", "value": 2}], "posicionamentos": [{"label": "Não identificado", "value": 930}, {"label": "Instagram Feed", "value": 620}, {"label": "Instagram Reels", "value": 134}, {"label": "Facebook Mobile Feed", "value": 88}, {"label": "Instagram Stories", "value": 85}, {"label": "Facebook Mobile Reels", "value": 62}, {"label": "video01", "value": 24}, {"label": "Facebook Stories", "value": 14}, {"label": "Facebook Desktop Feed", "value": 8}, {"label": "video02", "value": 6}, {"label": "an", "value": 5}, {"label": "Threads Feed", "value": 3}, {"label": "Facebook Instream Video", "value": 3}, {"label": "Instagram Explore Grid Home", "value": 2}, {"label": "120250345183800623", "value": 1}, {"label": "link in bio", "value": 1}], "conjuntos": [{"label": "Públicos quentes", "value": 418}, {"label": "Lookalike 1% · Leads", "value": 189}, {"label": "Interesses (cargos)", "value": 189}, {"label": "Lookalike 1% · Leads BET", "value": 135}, {"label": "Lookalike 1% · 13º Congresso", "value": 55}, {"label": "Lookalike 1% · SINEPE", "value": 49}], "google": [{"label": "Performance Max", "value": 165}, {"label": "YouTube · Demand Gen", "value": 30}, {"label": "Search · Pesquisa", "value": 11}], "camp_tab": [{"utm": "SOBE-WEBNARIO01-CAPTACAO", "src": "Meta", "value": 999}, {"utm": "undefined", "src": "Direto", "value": 630}, {"utm": "pmax", "src": "Google", "value": 165}, {"utm": "webinar_boas_vindas", "src": "RD", "value": 46}, {"utm": "SOBE-PNLD2027-CAPTACAO", "src": "Meta", "value": 36}, {"utm": "youtube_demand_gen", "src": "Google", "value": 30}, {"utm": "{{campaign.name}}", "src": "Meta", "value": 29}, {"utm": "webinar_21_hrs", "src": "RD", "value": 20}, {"utm": "search", "src": "Google", "value": 11}, {"utm": "e-mail_novo_correto", "src": "RD", "value": 7}, {"utm": "errata_webinar", "src": "RD", "value": 4}, {"utm": "e-mail_novo", "src": "RD", "value": 3}, {"utm": "webinar", "src": "RD", "value": 3}, {"utm": "pnld_novos", "src": "RD", "value": 2}, {"utm": "120250173445490623", "src": "Outro", "value": 1}], "med_tab": [{"utm": "undefined", "src": "Direto", "value": 794}, {"utm": "00-SEGUIDORES+ENG180+LEADS", "src": "Meta", "value": 418}, {"utm": "01-INTERESSES-CARGOS", "src": "Meta", "value": 189}, {"utm": "01-LAL1%-LEADS", "src": "Meta", "value": 189}, {"utm": "01-LAL1%-LEADSBET", "src": "Meta", "value": 135}, {"utm": "email", "src": "RD", "value": 85}, {"utm": "01-LAL1%-13CONG-PARTICIPANTES", "src": "Meta", "value": 55}, {"utm": "01-LAL1%-LEADS-SINEPE", "src": "Meta", "value": 49}, {"utm": "{{adset.name}}", "src": "Meta", "value": 29}, {"utm": "interesses", "src": "Google", "value": 27}, {"utm": "cpc", "src": "Google", "value": 11}, {"utm": "quente", "src": "Google", "value": 3}, {"utm": "paid", "src": "Outro", "value": 1}, {"utm": "social", "src": "Outro", "value": 1}], "diario": [{"date": "2026-07-08", "value": 3}, {"date": "2026-07-09", "value": 45}, {"date": "2026-07-10", "value": 60}, {"date": "2026-07-11", "value": 75}, {"date": "2026-07-12", "value": 61}, {"date": "2026-07-13", "value": 100}, {"date": "2026-07-14", "value": 81}, {"date": "2026-07-15", "value": 89}, {"date": "2026-07-16", "value": 192}, {"date": "2026-07-17", "value": 88}, {"date": "2026-07-18", "value": 103}, {"date": "2026-07-19", "value": 128}, {"date": "2026-07-20", "value": 112}, {"date": "2026-07-21", "value": 151}, {"date": "2026-07-22", "value": 298}, {"date": "2026-07-23", "value": 400}], "meta_total": 1064, "google_total": 206, "prof_unicos_orig": 456, "partial_last": false, "corte": "2026-07-23", "geo": {"estados": [{"label": "São Paulo (SP)", "uf": "SP", "value": 257, "ddds": ["11", "12", "13", "14", "15", "16", "17", "18", "19"]}, {"label": "Bahia (BA)", "uf": "BA", "value": 237, "ddds": ["71", "73", "74", "75", "77"]}, {"label": "Paraíba (PB)", "uf": "PB", "value": 205, "ddds": ["83"]}, {"label": "Minas Gerais (MG)", "uf": "MG", "value": 163, "ddds": ["31", "32", "33", "34", "35", "37", "38"]}, {"label": "Rio de Janeiro (RJ)", "uf": "RJ", "value": 156, "ddds": ["21", "22", "24"]}, {"label": "Ceará (CE)", "uf": "CE", "value": 123, "ddds": ["85", "88"]}, {"label": "Pernambuco (PE)", "uf": "PE", "value": 98, "ddds": ["81", "87"]}, {"label": "Paraná (PR)", "uf": "PR", "value": 85, "ddds": ["41", "42", "43", "44", "45", "46"]}, {"label": "Pará (PA)", "uf": "PA", "value": 82, "ddds": ["91", "93", "94"]}, {"label": "Rio Grande do Sul (RS)", "uf": "RS", "value": 80, "ddds": ["51", "53", "54", "55"]}, {"label": "Espírito Santo (ES)", "uf": "ES", "value": 56, "ddds": ["27", "28"]}, {"label": "Rio Grande do Norte (RN)", "uf": "RN", "value": 53, "ddds": ["84"]}, {"label": "Santa Catarina (SC)", "uf": "SC", "value": 46, "ddds": ["47", "48", "49"]}, {"label": "Maranhão (MA)", "uf": "MA", "value": 42, "ddds": ["98", "99"]}, {"label": "Piauí (PI)", "uf": "PI", "value": 38, "ddds": ["86", "89"]}, {"label": "Rondônia (RO)", "uf": "RO", "value": 34, "ddds": ["69"]}, {"label": "Amazonas (AM)", "uf": "AM", "value": 30, "ddds": ["92", "97"]}, {"label": "Alagoas (AL)", "uf": "AL", "value": 29, "ddds": ["82"]}, {"label": "Distrito Federal (DF)", "uf": "DF", "value": 28, "ddds": ["61"]}, {"label": "Goiás (GO)", "uf": "GO", "value": 27, "ddds": ["62", "64"]}, {"label": "Mato Grosso (MT)", "uf": "MT", "value": 25, "ddds": ["65", "66"]}, {"label": "Mato Grosso do Sul (MS)", "uf": "MS", "value": 24, "ddds": ["67"]}, {"label": "Acre (AC)", "uf": "AC", "value": 12, "ddds": ["68"]}, {"label": "Sergipe (SE)", "uf": "SE", "value": 12, "ddds": ["79"]}, {"label": "Tocantins (TO)", "uf": "TO", "value": 10, "ddds": ["63"]}, {"label": "Amapá (AP)", "uf": "AP", "value": 7, "ddds": ["96"]}, {"label": "Roraima (RR)", "uf": "RR", "value": 6, "ddds": ["95"]}], "regioes": [{"label": "Nordeste", "value": 837}, {"label": "Sudeste", "value": 632}, {"label": "Sul", "value": 211}, {"label": "Norte", "value": 181}, {"label": "Centro-Oeste", "value": 104}], "sem_uf": 21, "com_uf": 1965}};
 
 const fmt = n => n.toLocaleString('pt-BR');
 const pct = (n,t) => (100*n/t).toFixed(t? (100*n/t<10?1:0):0);
@@ -342,7 +405,7 @@ function renderDaily(){
   document.getElementById('dailyChart').innerHTML = DATA.diario.map((d,i)=>{
     const h=Math.max(4,(d.value/max)*100);
     const sd=shortDate(d.date);
-    const partial = i===last ? ' partial' : '';
+    const partial = (i===last && DATA.partial_last) ? ' partial' : '';
     return `<div class="dcol">
       <div class="dbar-wrap"><div class="dbar${partial}" style="height:0" data-h="${h}"><span class="dbar-v">${d.value}</span></div></div>
       <div class="dcol-lbl">${sd.d}<small>${sd.wd}</small></div>
@@ -352,6 +415,12 @@ function renderDaily(){
 }
 
 /* HORIZONTAL BARS */
+function renderTable(elId, rows, total){
+  const clean = v => (v==='(vazio)'||v==='undefined'||v==='nan') ? '<span style="color:var(--muted2)">(sem valor)</span>' : v;
+  const head='<thead><tr><th>UTM</th><th>Origem</th><th class="r">Leads</th><th class="r">%</th></tr></thead>';
+  const body=rows.map(r=>`<tr><td class="utm">${clean(r.utm)}</td><td><span class="src-tag src-${r.src.toLowerCase()}">${r.src}</span></td><td class="num r">${fmt(r.value)}</td><td class="pctc r">${pct(r.value,total)}%</td></tr>`).join('');
+  document.getElementById(elId).innerHTML=head+'<tbody>'+body+'</tbody>';
+}
 function renderUF(elId, arr, opts){
   const total=opts.total, max=arr[0].value, rows=Math.ceil(arr.length/2);
   const el=document.getElementById(elId);
@@ -388,12 +457,23 @@ function renderBars(elId, arr, opts={}){
 function init(){
   renderKpis();
   renderDaily();
+  if(!DATA.partial_last){const dn=document.getElementById('dashNote'); if(dn) dn.style.display='none';}
   renderBars('profChart', DATA.profissoes, {total:DATA.total,
     colorFn:(d,i)=> i===0 ? 'linear-gradient(90deg,#8b6fc9,#AD96DC)' : `linear-gradient(90deg,rgba(139,111,201,${0.85-i*0.07}),rgba(173,150,220,${0.9-i*0.07}))`});
   renderBars('fontesChart', DATA.fontes, {total:DATA.total,
     colorFn:d=>({'Meta Ads':'linear-gradient(90deg,#0866FF,#3d8bff)','Google Ads':'linear-gradient(90deg,#1a73e8,#4a9)','RD Station (e-mail)':'linear-gradient(90deg,#00b894,#55d6b0)','Direto / Não rastreado':'linear-gradient(90deg,#9ca3af,#c4cad4)'}[d.label]||'var(--accent)')});
   renderBars('placeChart', DATA.posicionamentos, {total:DATA.total});
   renderBars('adsetChart', DATA.conjuntos, {total:DATA.meta_total});
+  renderBars('googleChart', DATA.google, {total:DATA.google_total,
+    colorFn:d=>({'Performance Max':'linear-gradient(90deg,#12A150,#4ad07f)','YouTube · Demand Gen':'linear-gradient(90deg,#FF0033,#ff5c78)','Search · Pesquisa':'linear-gradient(90deg,#F9AB00,#ffcb52)'}[d.label]||'var(--accent)')});
+  document.getElementById('googleTag').textContent = fmt(DATA.google_total)+' leads Google';
+  const noEmpty = a => a.filter(r => !['undefined','(vazio)','nan',''].includes(String(r.utm)));
+  const campF = noEmpty(DATA.camp_tab), medF = noEmpty(DATA.med_tab);
+  renderTable('campTab', campF, DATA.total);
+  renderTable('medTab', medF, DATA.total);
+  document.getElementById('campTabTag').textContent = campF.length+' campanhas';
+  document.getElementById('medTabTag').textContent = medF.length+' mediums';
+
   // GEO
   const REGCOLOR={'Sudeste':'#AD96DC','Nordeste':'#E5904D','Sul':'#3F9E8F','Norte':'#5B8DEF','Centro-Oeste':'#C77DFF'};
   const geoTot=DATA.geo.com_uf;
