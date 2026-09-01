@@ -21,6 +21,7 @@ COR_ACENTO       = "#AD96DC"
 LANCAMENTO_COD   = ""
 USAR_PESQUISA    = False
 USAR_GOOGLE      = True
+USAR_LINKEDIN    = True
 
 FUNIL_IMPRESSOES  = True
 FUNIL_LINK_CLICKS = True
@@ -55,6 +56,7 @@ def sheet_url(t): return f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gvi
 URL_META = sheet_url("meta-ads")
 URL_GA   = sheet_url("breakdown-gender-age")
 URL_PT   = sheet_url("breakdown-platform")
+URL_LI   = sheet_url("linkedin-ads")
 
 def to_num(s):
     if pd.api.types.is_numeric_dtype(s): return s.fillna(0)
@@ -372,6 +374,99 @@ def meta_monthly(df):
                 "leads":int(r["leads"]),"imp":int(r["impressions"]),"lc":int(r["link_clicks"])})
     print(f"     Meta Mensal: {len(months)} meses"); return out
 
+# ══ LINKEDIN ADS ══════════════════════════════════════
+# Colunas esperadas na aba "linkedin-ads" (Windsor).
+# Qualquer uma que não exista vira 0 — nenhum cliente quebra por falta de coluna.
+LI_COLS = {
+    "Ad Analytics Cost":                        "spend",
+    "Ad Analytics Impressions":                 "impressions",
+    "Ad Analytics Clicks":                      "clicks",
+    "Ad Analytics Landing Page Clicks":         "lpc",
+    "Ad Analytics One Click Leads":             "leads_oc",
+    "Ad Analytics External Website Conversions":"conv_web",
+    "Ad Analytics Follows":                     "follows",
+    "Ad Analytics Company Page Clicks":         "page_clicks",
+    "Ad Analytics Likes":                       "likes",
+    "Ad Analytics Comments":                    "comments",
+    "Ad Analytics Shares":                      "shares",
+    "Ad Analytics Total Engagements":           "engagement",
+    "Ad Analytics Reactions":                   "reactions",
+    "Ad Analytics Video Views":                 "video_views",
+}
+
+def load_linkedin():
+    print("  Lendo linkedin-ads...")
+    df = pd.read_csv(URL_LI)
+    df = df.rename(columns={
+        "Date":"date",
+        "Campaign Name":"campaign",
+        "Campaign Group Name":"grupo",
+        "Campaign Objective Type":"obj",
+        "Creative Name (Creative)":"creative",
+        "Campaign Status":"status",
+        **LI_COLS,
+    })
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df = df.dropna(subset=["date"])
+    for c in ["campaign","grupo","obj","status"]:
+        if c not in df.columns: df[c] = ""
+        df[c] = df[c].astype(str).str.strip()
+    df["status"] = df["status"].str.upper()
+    for c in LI_COLS.values():
+        df[c] = to_num(df[c]) if c in df.columns else 0
+    df["leads"] = df["leads_oc"] + df["conv_web"]
+    # Reactions costuma englobar Likes; usa o maior dos dois por linha
+    df["reactions"] = df[["reactions","likes"]].max(axis=1)
+    if len(df):
+        print(f"     {len(df)} linhas | {df['date'].min().date()} → {df['date'].max().date()}")
+        print(f"     Invest. {MOEDA_SIMBOLO} {df['spend'].sum():,.2f} | {int(df['engagement'].sum())} engaj. | {int(df['leads'].sum())} leads")
+        print(f"     Objetivos: {', '.join(sorted(set(df['obj'])))}")
+    else:
+        print("     vazio — cliente sem LinkedIn Ads")
+    return df
+
+def _li_status(group):
+    """Status da campanha: prioriza ACTIVE, senão o status da última data."""
+    g = group[group["status"].notna() & (group["status"] != "") & (group["status"] != "NAN")]
+    if not len(g): return ""
+    if (g["status"] == "ACTIVE").any(): return "ACTIVE"
+    last = g[g["date"] == g["date"].max()]
+    return str(last["status"].iloc[0])
+
+def linkedin_raw(df):
+    """Uma linha por data+grupo+campanha. O template calcula KPIs, séries e
+    tabelas a partir daqui — fonte única, sem caminho paralelo pré-calculado
+    (era isso que quebrava 'Ontem'/datas livres no Meta)."""
+    if not len(df): return []
+    st = {(g, c): _li_status(sub) for (g, c), sub in df.groupby(["grupo","campaign"])}
+    agg_cols = {k: (k, "sum") for k in
+                ["spend","impressions","clicks","lpc","leads","engagement",
+                 "follows","page_clicks","comments","shares","reactions","video_views"]}
+    agg = df.groupby(["date","grupo","campaign","obj"]).agg(**agg_cols).reset_index()
+    rows = []
+    for _, r in agg.iterrows():
+        rows.append({
+            "d":   r["date"].strftime("%d/%m/%Y"),
+            "g":   str(r["grupo"]),
+            "c":   str(r["campaign"]),
+            "o":   str(r["obj"]),
+            "st":  st.get((str(r["grupo"]), str(r["campaign"])), ""),
+            "sp":  round(float(r["spend"]), 2),
+            "imp": int(r["impressions"]),
+            "cl":  int(r["clicks"]),
+            "lpc": int(r["lpc"]),
+            "ld":  int(r["leads"]),
+            "eng": int(r["engagement"]),
+            "fol": int(r["follows"]),
+            "pcl": int(r["page_clicks"]),
+            "com": int(r["comments"]),
+            "sha": int(r["shares"]),
+            "rea": int(r["reactions"]),
+            "vv":  int(r["video_views"]),
+        })
+    print(f"     LinkedIn RAW: {len(rows)} linhas | {agg['campaign'].nunique()} campanhas | {agg['grupo'].nunique()} grupos")
+    return rows
+
 # ══ MAIN ═══════════════════════════════════════════════
 # ══ GOOGLE ADS ════════════════════════════════════════
 URL_GOOGLE        = sheet_url("google-ads")
@@ -638,6 +733,15 @@ def main():
         g_month={"lbl":[],"totalS":[],"totalConv":[],"cpaG":[],"cpcG":[],"ctrG":[],"camps":[]}
         g_raw=[]
 
+    li_raw = []
+    if USAR_LINKEDIN:
+        print("\n[LINKEDIN ADS]")
+        try:
+            li_raw = linkedin_raw(load_linkedin())
+        except Exception as e:
+            print(f"  Aviso LinkedIn: {e}")
+            li_raw = []
+
     # ══ MONTAR data.json ══════════════════════════════
     data = {
         "META_KPIS":         m_k,
@@ -655,6 +759,8 @@ def main():
         "GOOGLE_BD":         g_bd,
         "GOOGLE_MONTHLY":    g_month,
         "GOOGLE_RAW":        g_raw,
+        "LINKEDIN_RAW":      li_raw,
+        "USAR_LINKEDIN":     bool(USAR_LINKEDIN and li_raw),
         "NOME_CLIENTE":      NOME_CLIENTE,
         "LOGO_LETRA":        LOGO_LETRA,
         "COR_ACENTO":        COR_ACENTO,
