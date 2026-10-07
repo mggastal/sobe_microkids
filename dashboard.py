@@ -207,6 +207,27 @@ def meta_raw(df):
             "sa":adset_st.get((str(r["campaign"]),str(r["adset"])),"")})
     return rows
 
+
+def meta_raw_ads(df):
+    """Linhas diárias por anúncio: permitem somar criativos com números reais em qualquer período."""
+    extra=[c for c in ["reach","engagement","shares","comments","saves","thruplay"] if c in df.columns]
+    agg=df.groupby(["date","campaign","adset","ad","is_lct"]).agg(
+        spend=("spend","sum"),leads=("leads","sum"),impressions=("impressions","sum"),
+        link_clicks=("link_clicks","sum"),clicks=("clicks","sum"),page_view=("page_view","sum"),
+        **{c:(c,"sum") for c in extra}
+    ).reset_index()
+    short={"reach":"rc","engagement":"en","shares":"sh","comments":"cm","saves":"sv","thruplay":"tp"}
+    rows=[]
+    for _,r in agg.iterrows():
+        row={"d":r["date"].strftime("%d/%m/%Y"),"c":str(r["campaign"]),"a":str(r["adset"]),"n":str(r["ad"]),
+             "lct":bool(r["is_lct"]),"sp":round(float(r["spend"]),2),"ld":int(r["leads"]),
+             "imp":int(r["impressions"]),"lc":int(r["link_clicks"]),"cl":int(r["clicks"]),"pv":int(r["page_view"])}
+        for c in extra:
+            v=int(r[c])
+            if v: row[short[c]]=v
+        rows.append(row)
+    return rows
+
 def meta_tables_period(df, p, img_dir):
     def ag(sub,cols):
         agg_d=dict(spend=("spend","sum"),impressions=("impressions","sum"),
@@ -708,7 +729,7 @@ def main():
     print("\n[META ADS]")
     df_meta=load_meta()
     m_k=meta_kpis(df_meta); m_d=meta_daily(df_meta)
-    m_dc=meta_daily_camps(df_meta); m_raw=meta_raw(df_meta)
+    m_dc=meta_daily_camps(df_meta); m_raw=meta_raw(df_meta); m_rad=meta_raw_ads(df_meta)
     m_t=meta_tables(df_meta,img_dir); m_bd=meta_breakdowns(df_meta)
     m_month=meta_monthly(df_meta)
     total_leads=m_k["lct"]["leads"] if LANCAMENTO_COD else m_k["all"]["leads"]
@@ -748,6 +769,7 @@ def main():
         "META_DAILY":        m_d,
         "META_DAILY_CAMPS":  m_dc,
         "META_RAW_CAMP":     m_raw,
+        "META_RAW_AD":       m_rad,
         "META_TABLES":       m_t,
         "META_BD":           m_bd,
         "META_MONTHLY":      m_month,
