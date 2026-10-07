@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Microkids · Relatório de Captações</title>
+<link rel="icon" type="image/png" href="./sobe.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f2f7;--surface:#fff;--surface2:#f7f8fc;--border:rgba(0,0,0,.07);
+  --text:#0f1523;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#AD96DC;--accent-2:#8b6fc9;--accent-soft:rgba(173,150,220,.14);
+  --meta:#0866FF;--google:#1a73e8;--rd:#4A9;--cyan:#00AEEF;
+  --sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 6px 24px rgba(15,21,35,.08);--r:12px;
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e;--surface:#111827;--surface2:#1a2236;--border:rgba(255,255,255,.08);
+  --text:#f0f4ff;--muted:#8b95a9;--muted2:#5a6478;--accent-soft:rgba(173,150,220,.16);
+  --sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 8px 30px rgba(0,0,0,.4);
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh;align-items:start;}
+
+/* SIDEBAR */
+.sb{background:#0f1523;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:11px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.logo-box{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f1523;flex-shrink:0;background:var(--accent);font-size:15px;}
+.logo-name{font-size:14px;font-weight:700;color:#fff;line-height:1;}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;}
+.sb-section{padding:14px 10px;}
+.sb-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;padding:8px 10px 6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.5);font-size:12.5px;font-weight:500;transition:all .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.sb-item.active{background:var(--accent-soft);color:#fff;}
+.sb-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--accent);}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.05);}
+.sb-footer span{font-size:10px;color:rgba(255,255,255,.28);display:block;line-height:1.5;}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:9000;box-shadow:0 2px 10px rgba(0,0,0,.05);gap:10px;flex-wrap:wrap;}
+.tb-l{display:flex;align-items:center;gap:12px;min-width:0;}
+.mob-menu{display:none;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;}
+.page-title{font-weight:700;font-size:16px;}
+.tb-badge{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-2);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;}
+.tb-badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(173,150,220,.5);}70%{box-shadow:0 0 0 7px rgba(173,150,220,0);}100%{box-shadow:0 0 0 0 rgba(173,150,220,0);}}
+.theme-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;}
+
+.content{padding:24px;max-width:1140px;width:100%;margin:0 auto;}
+
+/* HERO */
+.hero{position:relative;border-radius:16px;overflow:hidden;padding:26px 30px;margin-bottom:22px;background:linear-gradient(135deg,#0f1523 0%,#1b2540 55%,#2a2350 100%);box-shadow:var(--sh2);}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 12%,rgba(0,174,239,.30),transparent 42%),radial-gradient(circle at 10% 95%,rgba(173,150,220,.34),transparent 50%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;}
+.hero-logo{position:absolute;top:24px;right:28px;z-index:2;height:34px;width:auto;opacity:.95;}
+.hero-inner{padding-right:200px;}
+.sb-brand{display:flex;align-items:center;gap:9px;margin-top:10px;}
+.sb-brand img{width:26px;height:26px;border-radius:7px;background:#fff;padding:2px;}
+.tb-r{display:flex;align-items:center;gap:14px;}
+.tb-brand{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);}
+.tb-brand img{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:#fff;}
+@media(max-width:600px){.tb-brand span{display:none;}}
+.foot-logo{width:26px;height:26px;border-radius:7px;vertical-align:middle;margin-right:9px;border:1px solid var(--border);}
+@media(max-width:860px){.hero-logo{position:static;display:block;height:26px;margin:0 0 14px;}.hero-inner{padding-right:0;}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c9b6f0;margin-bottom:10px;}
+.hero-eyebrow .tag{background:rgba(173,150,220,.18);border:1px solid rgba(173,150,220,.35);border-radius:6px;padding:3px 8px;letter-spacing:1px;}
+.hero h1{font-weight:700;font-size:23px;line-height:1.2;color:#fff;max-width:620px;margin-bottom:6px;}
+.hero p{color:rgba(255,255,255,.6);font-size:13px;max-width:560px;line-height:1.6;}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 17px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);}
+.kpi-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px;}
+.kpi-val{font-size:26px;font-weight:700;line-height:1;font-family:'DM Mono',monospace;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:6px;}
+.kpi-sub b{color:var(--accent-2);font-weight:600;}
+
+/* SECTION / CARD */
+.sec{margin-bottom:24px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);padding:20px 22px;}
+.card-hd{display:flex;align-items:flex-start;gap:11px;margin-bottom:4px;}
+.card-ico{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent-2);}
+.card-ico svg{width:18px;height:18px;}
+.card-t{font-weight:700;font-size:15px;line-height:1.15;}
+.card-s{font-size:12px;color:var(--muted);margin-top:2px;}
+.card-tag{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);background:var(--surface2);border-radius:20px;padding:4px 11px;white-space:nowrap;}
+
+/* DAILY BARS */
+.daily{display:flex;align-items:flex-end;gap:10px;height:200px;padding:20px 4px 6px;overflow-x:auto;overflow-y:hidden;}
+.dcol{flex:1;min-width:34px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:8px;}
+.dbar-wrap{width:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;}
+.dbar{width:70%;max-width:46px;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--accent),var(--accent-2));position:relative;transition:height .6s cubic-bezier(.2,.8,.2,1);min-height:3px;}
+.dbar.partial{background:repeating-linear-gradient(45deg,var(--accent) 0 6px,var(--accent-2) 6px 12px);opacity:.7;}
+.dbar-v{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text);}
+.dcol-lbl{font-size:10px;color:var(--muted);text-align:center;line-height:1.3;font-weight:600;}
+.dcol-lbl small{display:block;color:var(--muted2);font-weight:500;font-size:9px;}
+
+/* H-BARS */
+.hbars{display:flex;flex-direction:column;gap:11px;margin-top:16px;}
+.hbar{display:grid;grid-template-columns:190px 1fr;gap:12px;align-items:center;}
+.hbar-lbl{font-size:12.5px;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hbar-track{position:relative;height:26px;background:var(--surface2);border-radius:7px;overflow:hidden;}
+.hbar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;display:flex;align-items:center;transition:width .7s cubic-bezier(.2,.8,.2,1);min-width:3px;}
+.hbar-num{position:absolute;top:0;bottom:0;display:flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding-left:10px;white-space:nowrap;}
+.hbar-num .pct{color:var(--muted);font-size:11px;}
+.hbar-num.inside{color:#fff;}
+.hbar-num.inside .pct{color:rgba(255,255,255,.8);}
+
+/* two-col grid for smaller cards */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid2 .hbar{grid-template-columns:150px 1fr;}
+.grid2 .hbar-lbl{font-size:12px;}
+
+.hbars.cols2{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;margin-top:16px;}
+.hbars.cols2 .hbar{grid-template-columns:130px 1fr;}
+.geo-regions{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.reg{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px 13px;position:relative;overflow:hidden;}
+.reg::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);}
+.reg-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px;}
+.reg-v{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
+.reg-p{font-size:11px;color:var(--muted);margin-top:2px;}
+/* UF bars — leitura em coluna (ordem geral) */
+.uf-grid{display:grid;grid-auto-flow:column;grid-template-columns:1fr 1fr;gap:10px 28px;margin-top:14px;}
+.ufb{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:center;}
+.ufb-l{min-width:0;}
+.ufb-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;}
+.ufb-ddd{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.legend-note{display:flex;align-items:center;gap:9px;background:var(--accent-soft);border:1px solid rgba(173,150,220,.25);border-radius:9px;padding:9px 13px;margin-top:16px;font-size:11.5px;color:var(--text);}
+.legend-note svg{width:15px;height:15px;flex-shrink:0;color:var(--accent-2);}
+.legend-note b{color:var(--accent-2);}
+.dash-note{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:14px;}
+.dash-note i{width:14px;height:10px;border-radius:2px;background:repeating-linear-gradient(45deg,var(--accent) 0 5px,var(--accent-2) 5px 10px);opacity:.7;display:inline-block;}
+
+.pagefoot{text-align:center;padding:24px 0 8px;color:var(--muted2);font-size:11px;}
+.pagefoot b{color:var(--accent-2);}
+
+/* Tabelas de UTM */
+.tab-wrap{overflow-x:auto;margin-top:14px;}
+.utab{width:100%;border-collapse:collapse;font-size:12.5px;min-width:420px;}
+.utab th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;padding:0 10px 9px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.utab th.r,.utab td.r{text-align:right;}
+.utab td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.utab tbody tr:last-child td{border-bottom:none;}
+.utab tbody tr:hover{background:var(--surface2);}
+.utab td.utm{font-family:'DM Mono',monospace;font-size:11.5px;word-break:break-word;}
+.utab td.num{font-family:'DM Mono',monospace;font-weight:500;white-space:nowrap;}
+.utab td.pctc{color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap;}
+.src-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px;white-space:nowrap;}
+.src-meta{background:rgba(8,102,255,.12);color:var(--meta);}
+.src-google{background:rgba(26,115,232,.13);color:var(--google);}
+.src-rd{background:rgba(46,139,118,.14);color:#2e8b76;}
+.src-direto{background:var(--surface2);color:var(--muted);}
+.src-outro{background:var(--surface2);color:var(--muted2);}
+.mt20{margin-top:20px;}
+/* Seletor de webinar */
+.switcher{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px;gap:3px;margin-bottom:18px;box-shadow:var(--sh);}
+.sw-btn{border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:8px 20px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sw-btn:hover{color:var(--text);}
+.sw-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(173,150,220,.4);}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr;}
+  .sb{position:fixed;left:-220px;width:210px;z-index:9500;transition:left .25s;box-shadow:0 0 30px rgba(0,0,0,.4);}
+  .sb.open{left:0;}
+  .mob-menu{display:block;}
+  .kpis{grid-template-columns:repeat(2,1fr);}
+  .grid2{grid-template-columns:1fr;}
+  .hbar{grid-template-columns:120px 1fr;}
+  .hbar-lbl{font-size:11.5px;}
+  .content{padding:16px;}
+  .daily{gap:5px;}
+  .switcher{display:flex;width:100%;}
+  .sw-btn{flex:1;padding:9px 0;}
+  .card{padding:16px 15px;}
+  /* estados empilhados (um abaixo do outro) e regiões em 2 colunas */
+  .uf-grid{grid-auto-flow:row!important;grid-template-columns:1fr!important;grid-template-rows:none!important;gap:11px;}
+  .ufb{grid-template-columns:118px 1fr;}
+  .geo-regions{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:480px){
+  .kpis{grid-template-columns:1fr;}
+  .hero{padding:20px 18px;}
+  .hero h1{font-size:19px;}
+  .hbar{grid-template-columns:96px 1fr;}
+  .ufb{grid-template-columns:104px 1fr;}
+  .hbar-lbl,.ufb-name{font-size:11px;}
+  .ufb-ddd{font-size:8.5px;}
+  .daily{height:170px;gap:3px;}
+  .dcol-lbl{font-size:9px;}
+  .geo-regions{grid-template-columns:1fr 1fr;gap:8px;}
+  .reg-v{font-size:17px;}
+}
+</style>
+<style>
+/* ── extras do relatório de captações ── */
+.view{display:none;}
+.view.on{display:block;}
+.switcher{flex-wrap:wrap;}
+.kpi.inv::before{background:#2e8b76;}
+.kpi.cpl::before{background:#E5904D;}
+.kpi-val.sm{font-size:22px;}
+.cmp-tab td.capt{font-weight:600;white-space:nowrap;}
+.cmp-tab td.capt small{display:block;color:var(--muted2);font-weight:500;font-size:10.5px;margin-top:2px;}
+.cmp-tab tr.tot td{font-weight:700;border-top:2px solid var(--border);background:var(--surface2);}
+.cmp-tab tbody tr.clk{cursor:pointer;}
+.cpl-pill{display:inline-block;font-family:'DM Mono',monospace;font-weight:600;font-size:12px;padding:3px 9px;border-radius:20px;background:var(--accent-soft);color:var(--accent-2);}
+.cpl-pill.best{background:rgba(46,139,118,.15);color:#2e8b76;}
+.note{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.55;}
+.note b{color:var(--text);}
+.note svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--accent-2);}
+.stack{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.stk-row{display:grid;grid-template-columns:80px 1fr 60px;gap:12px;align-items:center;}
+.stk-lbl{font-size:12px;font-weight:600;text-align:right;}
+.stk-track{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--surface2);}
+.stk-seg{height:100%;transition:width .7s cubic-bezier(.2,.8,.2,1);}
+.stk-tot{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-size:11.5px;color:var(--muted);}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+.mini-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.mini{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px 14px;}
+.mini-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;}
+.mini-v{font-family:'DM Mono',monospace;font-size:19px;font-weight:500;margin-top:5px;}
+.mini-s{font-size:11px;color:var(--muted);margin-top:2px;}
+.tipo-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;background:rgba(37,211,102,.14);color:#1c9b50;letter-spacing:.3px;}
+.hero.wa{background:linear-gradient(135deg,#0f1523 0%,#10352a 55%,#14532d 100%);}
+.hero.wa::after{background:radial-gradient(circle at 88% 12%,rgba(37,211,102,.32),transparent 42%),radial-gradient(circle at 10% 95%,rgba(173,150,220,.28),transparent 50%);}
+.kpi.wa::before{background:#25D366;}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:16px;}
+.ad{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.ad-img{aspect-ratio:1/1;background:var(--border) center/cover no-repeat;}
+.ad-b{padding:10px 12px;}
+.ad-n{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;word-break:break-word;}
+.ad-c{font-size:10px;color:var(--muted2);margin-top:2px;}
+.ad-m{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:9px;}
+.ad-m div{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700;}
+.ad-m b{display:block;font-family:'DM Mono',monospace;font-size:13px;color:var(--text);text-transform:none;letter-spacing:0;font-weight:500;margin-top:1px;}
+.ad-rank{display:inline-block;font-size:9px;font-weight:700;background:#25D366;color:#fff;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px;}
+.go-pnld{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:rgba(18,161,80,.12);color:#12A150;border:1px solid rgba(18,161,80,.3);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+@media(max-width:860px){#wMini{grid-template-columns:1fr 1fr!important;}}
+/* ── PNLD ── */
+.map-tabs{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px;margin-top:16px;}
+.map-tab{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);padding:7px 14px;border-radius:7px;cursor:pointer;}
+.bf-ctrl{display:flex;flex-wrap:wrap;gap:10px;}
+.bf-ctrl .map-tabs{margin-top:14px;}
+.map-tab.on{background:var(--surface);color:var(--text);box-shadow:var(--sh);}
+.map-tab i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0;}
+.map-wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:22px;margin-top:14px;align-items:start;}
+.map-box{position:relative;}
+#brMap{width:100%;height:auto;display:block;max-height:560px;}
+#brMap path{stroke:var(--surface);stroke-width:1.1;cursor:pointer;transition:fill .35s,opacity .15s;}
+#brMap path:hover{opacity:.82;stroke:var(--text);stroke-width:1.4;}
+#brMap text{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;pointer-events:none;text-anchor:middle;dominant-baseline:middle;}
+.map-tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh2);border-radius:10px;padding:10px 12px;font-size:11.5px;min-width:190px;opacity:0;transition:opacity .12s;z-index:5;}
+.map-tip b{font-size:13px;display:block;margin-bottom:6px;}
+.map-tip div{display:flex;justify-content:space-between;gap:14px;color:var(--muted);margin-top:2px;}
+.map-tip div span:last-child{font-family:'DM Mono',monospace;color:var(--text);}
+.map-leg{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:8px;}
+.map-leg i{flex:0 0 160px;height:8px;border-radius:4px;}
+.map-side-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-top:4px;}
+.rc-bar3{display:flex;flex-direction:column;gap:4px;margin-top:9px;}
+.rc-bar3 div{height:5px;border-radius:3px;}
+@media(max-width:860px){.map-wrap{grid-template-columns:1fr;}}
+.hero.pnld{background:linear-gradient(135deg,#0f1523 0%,#123527 55%,#1f4a2f 100%);}
+.hero.pnld::after{background:radial-gradient(circle at 88% 12%,rgba(18,161,80,.35),transparent 42%),radial-gradient(circle at 10% 95%,rgba(173,150,220,.30),transparent 50%);}
+.kpi.pn::before{background:#12A150;}
+.bf-head,.bf-row{display:grid;grid-template-columns:1fr 128px 1fr 150px;gap:10px;align-items:center;}
+.bf-head{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);font-weight:700;margin:16px 0 8px;}
+.bf-head .l{text-align:right;}
+.bf-rows{display:flex;flex-direction:column;gap:6px;}
+.bf-track{position:relative;height:20px;background:var(--surface2);border-radius:6px;overflow:hidden;}
+.bf-fill{position:absolute;top:0;bottom:0;border-radius:6px;transition:width .7s cubic-bezier(.2,.8,.2,1);}
+.bf-track.l .bf-fill{right:0;background:linear-gradient(270deg,#8b6fc9,#AD96DC);}
+.bf-track.r .bf-fill{left:0;background:linear-gradient(90deg,#12A150,#4ad07f);}
+.bf-v{position:absolute;top:0;bottom:0;display:flex;align-items:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:0 7px;white-space:nowrap;}
+.bf-track.l .bf-v{right:0;}
+.bf-track.r .bf-v{left:0;}
+.bf-uf{text-align:center;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bf-uf small{display:block;font-size:9.5px;color:var(--muted2);font-weight:500;}
+.idx{display:inline-block;justify-self:start;width:max-content;max-width:100%;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;text-align:center;}
+.idx.op{background:rgba(229,144,77,.16);color:#c96f2a;}
+.idx.al{background:rgba(18,161,80,.14);color:#12A150;}
+.idx.ac{background:var(--accent-soft);color:var(--accent-2);}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+.ins{border-radius:12px;padding:15px 16px;border:1px solid var(--border);background:var(--surface2);position:relative;overflow:hidden;}
+.ins::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--c);}
+.ins-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--c);margin-bottom:8px;}
+.ins-v{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-bottom:6px;}
+.ins p{font-size:12px;color:var(--muted);line-height:1.55;}
+.ins p b{color:var(--text);}
+.reg-cmp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px;}
+.rc{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px 13px;position:relative;overflow:hidden;}
+.rc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c);}
+.rc-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;}
+.rc-line{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--muted);margin-top:3px;}
+.rc-line b{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--text);}
+.rc-bar{display:flex;height:6px;border-radius:4px;overflow:hidden;margin-top:9px;background:var(--border);}
+.match-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px;}
+.mt{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;}
+.mt-n{font-size:12.5px;font-weight:600;line-height:1.3;}
+.mt-s{font-size:11px;color:var(--muted);margin-top:3px;}
+.mt-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+.mt-tag{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent-2);}
+.mt-tag.p1{background:rgba(18,161,80,.14);color:#12A150;}
+.mt-tag.p2{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+@media(max-width:860px){
+  .insights,.reg-cmp{grid-template-columns:1fr 1fr;}
+  .match-grid{grid-template-columns:1fr;}
+  .bf-head,.bf-row{grid-template-columns:1fr 84px 1fr;}
+  .bf-head span:last-child,.bf-row .idx{display:none;}
+}
+@media(max-width:480px){.insights,.reg-cmp{grid-template-columns:1fr;}}
+
+@media(max-width:860px){.mini-kpis{grid-template-columns:1fr;}.stk-row{grid-template-columns:62px 1fr 48px;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sb" id="sidebar">
+    <div class="sb-logo" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <img src="__LOGO_MK__" alt="Microkids" style="height:30px;width:auto;display:block">
+      <div class="logo-sub" style="margin:0">Relatório · Sobé Estratégias</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">Relatório</div>
+      <a class="sb-item" data-v="geral" onclick="go('geral')"><span class="dot"></span>Visão geral</a>
+      <div class="sb-lbl" style="margin-top:8px">Captações · base de leads</div>
+      <div id="sbCapts"></div>
+      <div class="sb-lbl" style="margin-top:8px">WhatsApp / e-book</div>
+      <a class="sb-item" data-v="whats" onclick="go('whats')"><span class="dot" style="background:#25D366"></span>PNLD · Circuito · Robótica</a>
+      <div class="sb-lbl" style="margin-top:8px">Resultado PNLD 2027</div>
+      <a class="sb-item" data-v="pnld" onclick="go('pnld')"><span class="dot" style="background:#12A150"></span>Escolhas × investimento</a>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-brand" style="margin:0 0 10px"><img src="__LOGO_SOBE__" alt="Sobé"><span style="font-size:11px;color:rgba(255,255,255,.55);display:inline">Sobé Estratégias</span></div>
+      <span>Relatório de captações</span>
+      <span id="footGen"></span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-l">
+        <button class="mob-menu" onclick="toggleSb()">☰</button>
+        <div class="page-title" id="pageTitle">Relatório de Captações</div>
+        <span class="tb-badge"><span class="pulse"></span><span id="badgeTotal">—</span></span>
+      </div>
+      <div class="tb-r"><span class="tb-brand"><img src="__LOGO_SOBE__" alt="Sobé"><span>Sobé Estratégias</span></span>
+      <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Escuro</span></button></div>
+    </div>
+
+    <div class="content" id="topo">
+      <div class="switcher" id="switcher"></div>
+
+      <!-- ═════════════ VISÃO GERAL ═════════════ -->
+      <div class="view" id="v-geral">
+        <div class="hero"><img src="__LOGO_MK__" alt="Microkids" class="hero-logo"><div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag">Consolidado · Jul a Out/2026</span></div>
+          <h1>Captações Microkids: leads, investimento e custo por lead</h1>
+          <p>Base completa de inscritos nas landing pages, cruzada com o investimento em Meta Ads e Google Ads de cada captação. <b style="color:#c9b6f0" id="gHeroNote"></b></p>
+        </div></div>
+
+        <div class="kpis" id="gKpis"></div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+              <div><div class="card-t">Comparativo das captações</div><div class="card-s">Leads únicos na base × investimento atribuído a cada captação</div></div>
+              <span class="card-tag" id="cmpTag"></span>
+            </div>
+            <div class="tab-wrap"><table class="utab cmp-tab" id="cmpTab"></table></div>
+            <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span><b>CPL real</b> = investimento ÷ leads únicos (por e-mail) que de fato chegaram na base, de todas as origens (pago, e-mail e direto). <b>CPL plataforma</b> = investimento ÷ conversões que o Meta/Google reportam. Clique numa linha para abrir a captação.</span></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <div><div class="card-t">Leads por captação</div><div class="card-s">Leads únicos na base</div></div></div>
+              <div class="hbars" id="gLeadsChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div><div class="card-t">Custo por lead real</div><div class="card-s">Quanto menor, melhor</div></div></div>
+              <div class="hbars" id="gCplChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="extras">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-ico" style="background:rgba(37,211,102,.14);color:#1c9b50"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg></div>
+              <div><div class="card-t">Captações de WhatsApp / e-book</div><div class="card-s">Leads entregues por WhatsApp ou download de e-book, então não aparecem na base das LPs. Medidos pela conversão do Meta Ads. Clique numa linha para ver o detalhe</div></div>
+              <span class="card-tag" id="exTag"></span>
+            </div>
+            <div class="tab-wrap"><table class="utab cmp-tab" id="exTab"></table></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div><div class="card-t">Cadastros por mês</div><div class="card-s">Volume da base por captação ao longo do tempo</div></div></div>
+            <div class="stack" id="gMensal"></div>
+            <div class="legend" id="gMensalLeg"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+                <div><div class="card-t">Recorrência dos leads</div><div class="card-s">Em quantas captações o mesmo e-mail se inscreveu</div></div></div>
+              <div class="hbars" id="gRecChart"></div>
+              <div class="note" id="gRecNote"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg></div>
+                <div><div class="card-t">Origem do lead</div><div class="card-s">Base inteira, leads únicos</div></div></div>
+              <div class="hbars" id="gFontesChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div><div class="card-t">Perfil profissional da base</div><div class="card-s">Cargos informados, agrupados por área de atuação</div></div></div>
+            <div class="hbars" id="gProfChart"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><div class="card-t">Distribuição geográfica da base</div><div class="card-s">Localização estimada pelo DDD do telefone</div></div>
+              <span class="card-tag" id="gGeoTag"></span></div>
+            <div class="geo-regions" id="gRegChart"></div>
+            <div class="uf-grid" id="gUfChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════ PNLD 2027 ═════════════ -->
+      <div class="view" id="v-pnld">
+        <div class="hero pnld"><img src="__LOGO_MK__" alt="Microkids" class="hero-logo"><div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag" style="background:rgba(18,161,80,.2);border-color:rgba(74,208,127,.4);color:#9be8b8">PNLD Anos Iniciais 2027–2030 · Exploradores Digitais</span></div>
+          <h1 id="pHeroTitle"></h1>
+          <p>Resultado preliminar da escolha das escolas cruzado com o investimento em Meta Ads das campanhas PNLD, estado por estado. A pergunta: <b style="color:#9be8b8">o tráfego chegou onde a Microkids foi escolhida?</b></p>
+        </div></div>
+
+        <div class="kpis" id="pKpis"></div>
+
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico" style="background:rgba(18,161,80,.14);color:#12A150"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></svg></div>
+              <div><div class="card-t">Mapa: escolhas, investimento e leads dos webinars</div><div class="card-s">Escolha a camada. Passe o mouse sobre um estado para ver todos os números. *Conta toda = todas as campanhas Meta no período dos webinars</div></div></div>
+            <div class="map-tabs" id="mapTabs"></div>
+            <div class="map-wrap">
+              <div class="map-box"><svg id="brMap"></svg><div class="map-tip" id="mapTip"></div>
+                <div class="map-leg"><span id="legMin">0</span><i id="legBar"></i><span id="legMax"></span></div></div>
+              <div class="map-side"><div class="map-side-t" id="mapSideT"></div><div class="hbars" id="mapTop" style="margin-top:10px;gap:8px"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><div class="card-t">Por região: escolhas × investimento × leads dos webinars</div><div class="card-s">Participação de cada região em cada métrica</div></div></div>
+            <div class="reg-cmp" id="pReg"></div>
+            <div class="legend"><span><i style="background:#12A150"></i>% das escolas que escolheram a MK</span><span><i style="background:#8b6fc9"></i>% do investimento PNLD</span><span><i style="background:#00AEEF"></i>% dos leads dos webinars 01–03</span></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+              <div><div class="card-t" id="bfTitle">Por estado: investimento × escolhas</div><div class="card-s" id="bfSub"></div></div>
+              <span class="card-tag" id="bfTag"></span></div>
+            <div class="bf-ctrl">
+              <div class="map-tabs" id="bfInv"></div>
+              <div class="map-tabs" id="bfAgg"></div>
+            </div>
+            <div class="bf-head"><span class="l" id="bfHeadL">% do investimento</span><span style="text-align:center" id="bfHeadC">Estado</span><span>% das escolas</span><span>Leitura</span></div>
+            <div class="bf-rows" id="pBf"></div>
+          </div>
+        </div>
+
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico" style="background:rgba(18,161,80,.14);color:#12A150"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></div>
+                <div><div class="card-t">Municípios · 1ª opção</div><div class="card-s">Onde mais escolas escolheram a MK como 1ª opção</div></div></div>
+              <div class="hbars" id="pMun1" style="gap:9px"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico" style="background:var(--surface2);color:var(--muted)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></div>
+                <div><div class="card-t">Municípios · 2ª opção</div><div class="card-s">Onde mais escolas escolheram a MK como 2ª opção</div></div></div>
+              <div class="hbars" id="pMun2" style="gap:9px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div><div class="card-t">Investimento PNLD · Meta Ads</div><div class="card-s" id="pInvSub"></div></div></div>
+              <div class="mini-kpis" id="pInv" style="grid-template-columns:1fr 1fr"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico" style="background:rgba(18,161,80,.14);color:#12A150"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                <div><div class="card-t">Escolas por rede de ensino</div><div class="card-s">Escolas que escolheram a MK, por rede (municipal, estadual ou federal)</div></div></div>
+              <div class="hbars" id="pRede"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+              <div><div class="card-t">Tabela completa por estado</div><div class="card-s">Escolhas, alunos (3º ao 5º ano, Censo 2025), investimento, alcance e leads da base</div></div></div>
+            <div class="tab-wrap"><table class="utab cmp-tab" id="pTab"></table></div>
+            <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span><b>Fontes:</b> relatório preliminar de escolha do PNLD (obra 0494 P27 01 02 099 099), Censo Escolar 2025 e exportação do Gerenciador de Anúncios por região (SOBE-PNLD2027-CAPTACAO + COLAB). As campanhas tinham alcance nacional: a distribuição por estado é a entrega do Meta, não uma divisão manual de verba. Mapa: @svg-maps/brazil (CC BY 4.0). Correlação não prova causa. A escolha também depende da rede, da equipe comercial e do tamanho de cada estado.</span></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+              <div><div class="card-t">Escolas que escolheram a MK e já estavam na nossa base</div><div class="card-s">Nome da escola informado por um lead das captações coincide com uma escola escolhida, no mesmo estado (DDD)</div></div>
+              <span class="card-tag" id="pMatchTag"></span></div>
+            <div class="match-grid" id="pMatch"></div>
+            <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span>Só entram correspondências fortes: nome próprio distintivo igual nos dois cadastros e mesmo estado. Nomes de patronos muito comuns ("São José", "Nossa Senhora Aparecida") foram descartados. A base não tem município, então trate como <b>indício forte</b>, não confirmação. Os leads do PNLD em si (WhatsApp / e-book) não estão nesta base.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════ WHATSAPP / E-BOOK ═════════════ -->
+      <div class="view" id="v-whats">
+        <div class="hero wa"><img src="__LOGO_MK__" alt="Microkids" class="hero-logo"><div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag" style="background:rgba(37,211,102,.18);border-color:rgba(37,211,102,.4);color:#a6f0c2">Captações de WhatsApp / e-book</span></div>
+          <h1>PNLD 2027, Circuito e Robótica: investimento, leads e criativos</h1>
+          <p>Captações em que o lead vai para o WhatsApp ou baixa um e-book, por isso não aparecem na base das landing pages. <b style="color:#a6f0c2">Leads = conversões registradas pelo Meta Ads.</b></p>
+        </div></div>
+
+        <div class="kpis" id="wKpis"></div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico" style="background:rgba(37,211,102,.14);color:#1c9b50"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+              <div><div class="card-t">Comparativo das captações</div><div class="card-s">Clique numa linha para ver o detalhe</div></div></div>
+            <div class="tab-wrap"><table class="utab cmp-tab" id="wCmp"></table></div>
+          </div>
+        </div>
+
+        <div class="map-tabs" id="wTabs" style="margin:4px 0 18px"></div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico" style="background:rgba(37,211,102,.14);color:#1c9b50"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg></div>
+              <div><div class="card-t" id="wTitle"></div><div class="card-s" id="wSub"></div></div>
+              <span class="card-tag" id="wTag"></span></div>
+            <div class="mini-kpis" id="wMini" style="grid-template-columns:repeat(4,1fr)"></div>
+            <div id="wPnldLink"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div><div class="card-t" id="wSerieT"></div><div class="card-s">Leads registrados pelo Meta · investimento no período abaixo de cada barra</div></div></div>
+            <div class="daily" id="wSerie" style="height:230px"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+              <div><div class="card-t">Públicos · Meta Ads</div><div class="card-s">Investimento, leads e CPL por conjunto de anúncios</div></div></div>
+            <div class="tab-wrap"><table class="utab" id="wPub"></table></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              <div><div class="card-t">Criativos</div><div class="card-s">Anúncios ordenados por investimento</div></div>
+              <span class="card-tag" id="wAdsTag"></span></div>
+            <div class="ads-grid" id="wAds"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════ CAPTAÇÃO ═════════════ -->
+      <div class="view" id="v-capt">
+        <div class="hero"><img src="__LOGO_MK__" alt="Microkids" class="hero-logo"><div class="hero-inner">
+          <div class="hero-eyebrow"><span class="tag" id="heroTag"></span></div>
+          <h1 id="heroTitle"></h1>
+          <p>Panorama dos inscritos: perfil profissional, origem, investimento e análise de UTMs. <b style="color:#c9b6f0" id="heroNote"></b></p>
+        </div></div>
+
+        <div class="kpis" id="kpis"></div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div><div class="card-t">Investimento da captação</div><div class="card-s">Mídia paga atribuída a esta captação</div></div></div>
+            <div class="mini-kpis" id="invMini"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div><div class="card-t" id="dailyTitle">Leads por dia</div><div class="card-s" id="dailySub"></div></div>
+              <span class="card-tag" id="dailyTag"></span></div>
+            <div class="daily" id="dailyChart"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+              <div><div class="card-t">Conjuntos de anúncios · Meta Ads</div><div class="card-s">Leads na base, investimento e CPL por público</div></div>
+              <span class="card-tag" id="metaTag"></span></div>
+            <div class="tab-wrap"><table class="utab" id="adsetTab"></table></div>
+          </div>
+        </div>
+
+        <div class="sec" id="googleCard">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico" style="background:#fff;border:1px solid var(--border);padding:6px"><svg viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18A13.2 13.2 0 0 1 11 24c0-1.45.25-2.86.69-4.18v-5.7H4.34A21.99 21.99 0 0 0 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg></div>
+              <div><div class="card-t">Campanhas · Google Ads</div><div class="card-s">Leads na base, investimento e CPL por tipo de campanha</div></div>
+              <span class="card-tag" id="googleTag"></span></div>
+            <div class="tab-wrap"><table class="utab" id="googleTab"></table></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div><div class="card-t">Perfil profissional dos leads</div><div class="card-s">Cargos informados, agrupados por área de atuação</div></div></div>
+            <div class="hbars" id="profChart"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg></div>
+                <div><div class="card-t">Origem do lead</div><div class="card-s">Plataforma de captação</div></div></div>
+              <div class="hbars" id="fontesChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+                <div><div class="card-t">Posicionamento</div><div class="card-s">Onde o anúncio Meta foi clicado</div></div></div>
+              <div class="hbars" id="placeChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="card">
+            <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><div class="card-t">Distribuição geográfica</div><div class="card-s">Localização estimada pelo DDD do telefone</div></div>
+              <span class="card-tag" id="geoTag"></span></div>
+            <div class="geo-regions" id="regChart"></div>
+            <div class="uf-grid" id="ufChart"></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+                <div><div class="card-t">Leads por <span style="font-family:'DM Mono',monospace">utm_campaign</span></div></div>
+                <span class="card-tag" id="campTabTag"></span></div>
+              <div class="tab-wrap"><table class="utab" id="campTab"></table></div>
+            </div>
+            <div class="card">
+              <div class="card-hd"><div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+                <div><div class="card-t">Leads por <span style="font-family:'DM Mono',monospace">utm_medium</span></div></div>
+                <span class="card-tag" id="medTabTag"></span></div>
+              <div class="tab-wrap"><table class="utab" id="medTab"></table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagefoot"><img src="__LOGO_SOBE__" alt="Sobé" class="foot-logo">Desenvolvido por <b>Sobé Estratégias</b> · Relatório de captações · Microkids · <span id="genFoot"></span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const CAPTS = D.capts, G = D.geral, P = D.pnld;
+const CAPT_COLOR = {w1:'#8b6fc9', w2:'#AD96DC', w3:'#00AEEF', bncc:'#E5904D', outros:'#c4cad4'};
+const REGCOLOR = {'Sudeste':'#AD96DC','Nordeste':'#E5904D','Sul':'#3F9E8F','Norte':'#5B8DEF','Centro-Oeste':'#C77DFF'};
+const MES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+const fmt = n => (n==null?'—':Number(n).toLocaleString('pt-BR'));
+const brl = n => n==null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const brl0 = n => n==null ? '—' : 'R$ ' + Number(n).toLocaleString('pt-BR',{maximumFractionDigits:0});
+const pct = (n,t) => t ? (100*n/t).toFixed(100*n/t<10?1:0) : '0';
+const shortDate = iso => { const [y,m,d]=iso.split('-'); const wd=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'][new Date(iso+'T12:00').getDay()]; return {d:`${d}/${m}`, wd}; };
+const longDate = iso => { const [y,m,d]=iso.split('-'); return `${+d} ${MES[+m-1]}`; };
+const per = p => `${longDate(p.ini)} a ${longDate(p.fim)}`;
+const weekEnd = iso => { const d=new Date(iso+'T12:00'); d.setDate(d.getDate()+6); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`; };
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ── genéricos ── */
+function renderBars(elId, arr, opts={}){
+  const el=document.getElementById(elId);
+  if(!arr.length){el.innerHTML='<div style="color:var(--muted2);font-size:12px">Sem dados</div>';return;}
+  const total = opts.total || arr.reduce((a,b)=>a+b.value,0);
+  const max = Math.max(...arr.map(d=>d.value));
+  el.innerHTML = arr.map((d,i)=>{
+    const w=Math.max(2,(d.value/max)*100);
+    const color = opts.colorFn ? opts.colorFn(d,i) : 'linear-gradient(90deg,var(--accent-2),var(--accent))';
+    const inside = w>(opts.insideMin||30);
+    const txt = opts.valFmt ? opts.valFmt(d) : `${fmt(d.value)} <span class="pct">${pct(d.value,total)}%</span>`;
+    return `<div class="hbar"><div class="hbar-lbl" title="${esc(d.label)}">${esc(d.label)}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:0;background:${color}" data-w="${w}"></div>
+      <div class="hbar-num ${inside?'inside':''}" style="${inside?'left:0':'left:'+w+'%'}">${txt}</div></div></div>`;
+  }).join('');
+  requestAnimationFrame(()=>el.querySelectorAll('.hbar-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+function renderGeo(regId, ufId, tagId, geo){
+  const tot=geo.com_uf;
+  document.getElementById(tagId).textContent=`${fmt(tot)} com DDD · ${geo.estados.length} estados`;
+  document.getElementById(regId).innerHTML = geo.regioes.map(r=>`<div class="reg" style="--c:${REGCOLOR[r.label]}"><div class="reg-n">${r.label}</div><div class="reg-v">${fmt(r.value)}</div><div class="reg-p">${pct(r.value,tot)}% dos leads</div></div>`).join('');
+  const arr=geo.estados, max=arr.length?arr[0].value:1, el=document.getElementById(ufId);
+  el.style.gridTemplateRows='repeat('+Math.ceil(arr.length/2)+',auto)';
+  el.innerHTML = arr.map(d=>{
+    const w=Math.max(2,(d.value/max)*100), inside=w>30;
+    return `<div class="ufb"><div class="ufb-l"><div class="ufb-name">${d.label}</div><div class="ufb-ddd">DDD ${d.ddds.join(' · ')}</div></div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:0;background:${REGCOLOR[d.reg]}" data-w="${w}"></div>
+      <div class="hbar-num ${inside?'inside':''}" style="${inside?'left:0':'left:'+w+'%'}">${fmt(d.value)} <span class="pct">${pct(d.value,tot)}%</span></div></div></div>`;
+  }).join('');
+  requestAnimationFrame(()=>el.querySelectorAll('.hbar-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+const SRC_CLS = {'Meta Ads':'meta','Google Ads':'google','RD Station (e-mail)':'rd','Direto / Não rastreado':'direto'};
+const SRC_SHORT = {'Meta Ads':'Meta','Google Ads':'Google','RD Station (e-mail)':'RD','Direto / Não rastreado':'Direto'};
+const fonteColor = d=>({'Meta Ads':'linear-gradient(90deg,#0866FF,#3d8bff)','Google Ads':'linear-gradient(90deg,#1a73e8,#4a9)','RD Station (e-mail)':'linear-gradient(90deg,#00b894,#55d6b0)','Direto / Não rastreado':'linear-gradient(90deg,#9ca3af,#c4cad4)'}[d.label]||'var(--accent)');
+const profColor = (d,i)=> i===0 ? 'linear-gradient(90deg,#8b6fc9,#AD96DC)' : `linear-gradient(90deg,rgba(139,111,201,${Math.max(.3,.85-i*.07)}),rgba(173,150,220,${Math.max(.35,.9-i*.07)}))`;
+function utmTable(elId, rows, total){
+  const head='<thead><tr><th>UTM</th><th>Origem</th><th class="r">Leads</th><th class="r">%</th></tr></thead>';
+  document.getElementById(elId).innerHTML=head+'<tbody>'+rows.map(r=>`<tr><td class="utm">${esc(r.utm)}</td><td><span class="src-tag src-${SRC_CLS[r.src]||'outro'}">${SRC_SHORT[r.src]||r.src}</span></td><td class="num r">${fmt(r.value)}</td><td class="pctc r">${pct(r.value,total)}%</td></tr>`).join('')+'</tbody>';
+}
+
+/* ── VISÃO GERAL ── */
+function renderGeral(){
+  const leadsCapt = CAPTS.reduce((a,c)=>a+c.total,0);
+  const ex = G.extras, exSp = ex.reduce((a,e)=>a+e.spend,0), exLd = ex.reduce((a,e)=>a+e.plat,0);
+  const spAll = G.spend + exSp;
+  document.getElementById('gHeroNote').textContent = `Base atualizada em ${G.gerado}.`;
+  document.getElementById('gKpis').innerHTML = [
+    {l:'Leads únicos na base', v:fmt(G.unicos), s:`${fmt(G.cadastros)} cadastros · ${CAPTS.length} captações`},
+    {l:'Investimento · captações da base', v:brl0(G.spend), s:`Meta ${brl0(G.spend_meta)} · Google ${brl0(G.spend_google)}`, c:'inv'},
+    {l:'CPL real médio', v:brl(G.spend/leadsCapt), s:`investimento ÷ leads das captações`, c:'cpl'},
+    {l:'+ WhatsApp / e-book', v:fmt(exLd), s:`leads Meta · ${brl0(exSp)} investidos`, c:'inv'},
+  ].map(k=>`<div class="kpi ${k.c||''}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.v.length>9?'sm':''}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const best = Math.min(...CAPTS.filter(c=>c.cpl).map(c=>c.cpl));
+  document.getElementById('cmpTag').textContent = `${brl0(G.spend)} investidos`;
+  const head = '<thead><tr><th>Captação</th><th class="r">Leads</th><th class="r">Meta Ads</th><th class="r">Google Ads</th><th class="r">Investimento</th><th class="r">CPL real</th><th class="r">Conv. plataforma</th><th class="r">CPL plataforma</th></tr></thead>';
+  const rows = CAPTS.map(c=>`<tr class="clk" onclick="go('${c.k}')"><td class="capt"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${CAPT_COLOR[c.k]};margin-right:7px"></span>${c.titulo}<small>${per(c.periodo)} · ${c.dias} dias</small></td>
+    <td class="num r">${fmt(c.total)}</td><td class="num r">${brl(c.spend_meta)}</td><td class="num r">${c.spend_google?brl(c.spend_google):'—'}</td>
+    <td class="num r"><b>${brl(c.spend)}</b></td><td class="r"><span class="cpl-pill ${c.cpl===best?'best':''}">${brl(c.cpl)}</span></td>
+    <td class="num r">${fmt(c.plat_leads)}</td><td class="num r">${brl(c.cpl_plat)}</td></tr>`).join('');
+  const totPlat = CAPTS.reduce((a,c)=>a+c.plat_leads,0);
+  const tot = `<tr class="tot"><td>Total</td><td class="num r">${fmt(leadsCapt)}</td><td class="num r">${brl(G.spend_meta)}</td><td class="num r">${brl(G.spend_google)}</td><td class="num r">${brl(G.spend)}</td><td class="r"><span class="cpl-pill">${brl(G.spend/leadsCapt)}</span></td><td class="num r">${fmt(totPlat)}</td><td class="num r">${brl(G.spend/totPlat)}</td></tr>`;
+  document.getElementById('cmpTab').innerHTML = head+'<tbody>'+rows+tot+'</tbody>';
+
+  renderBars('gLeadsChart', CAPTS.map(c=>({label:c.nome,value:c.total,k:c.k})), {colorFn:d=>CAPT_COLOR[d.k]});
+  renderBars('gCplChart', CAPTS.filter(c=>c.cpl).map(c=>({label:c.nome,value:c.cpl,k:c.k})).sort((a,b)=>a.value-b.value),
+    {colorFn:d=>CAPT_COLOR[d.k], valFmt:d=>brl(d.value)});
+
+  document.getElementById('exTag').textContent = `${brl0(exSp)} · ${fmt(exLd)} leads`;
+  document.getElementById('exTab').innerHTML = '<thead><tr><th>Captação</th><th>Tipo</th><th class="r">Investimento</th><th class="r">Leads (Meta)</th><th class="r">CPL</th><th class="r">Impressões</th></tr></thead><tbody>'+
+    ex.map(e=>`<tr class="clk" onclick="wSel=(W.find(w=>w.nome===${JSON.stringify(e.nome).replace(/"/g,'&quot;')})||W[0]).k;go('whats')"><td class="capt">${e.nome}<small>${longDate(e.ini)} a ${longDate(e.fim)} · ${e.camps.join(', ')}</small></td><td><span class="tipo-tag">${e.tipo}</span></td><td class="num r">${brl(e.spend)}</td><td class="num r">${fmt(e.plat)}</td><td class="r"><span class="cpl-pill">${brl(e.cpl)}</span></td><td class="num r">${fmt(e.imp)}</td></tr>`).join('')+
+    `<tr class="tot"><td>Total</td><td></td><td class="num r">${brl(exSp)}</td><td class="num r">${fmt(exLd)}</td><td class="r"><span class="cpl-pill">${brl(exSp/exLd)}</span></td><td class="num r">${fmt(ex.reduce((a,e)=>a+e.imp,0))}</td></tr></tbody>`;
+
+  // mensal empilhado
+  const M=G.mensal, keys=[...CAPTS.map(c=>c.k),'outros'];
+  const nomes = Object.fromEntries(CAPTS.map(c=>[c.k,c.nome])); nomes.outros='Outras páginas';
+  const totals=M.meses.map((_,i)=>keys.reduce((a,k)=>a+(M.series[k][i]||0),0)), mx=Math.max(...totals);
+  document.getElementById('gMensal').innerHTML = M.meses.map((m,i)=>{
+    const [y,mm]=m.split('-');
+    const segs=keys.map(k=>{const v=M.series[k][i]||0; return v?`<div class="stk-seg" title="${nomes[k]}: ${fmt(v)}" style="width:0;background:${CAPT_COLOR[k]}" data-w="${100*v/mx}"></div>`:''}).join('');
+    return `<div class="stk-row"><div class="stk-lbl">${MES[+mm-1]}/${y.slice(2)}</div><div class="stk-track">${segs}</div><div class="stk-tot">${fmt(totals[i])}</div></div>`;
+  }).join('');
+  document.getElementById('gMensalLeg').innerHTML = keys.map(k=>`<span><i style="background:${CAPT_COLOR[k]}"></i>${nomes[k]}</span>`).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#gMensal .stk-seg').forEach(f=>f.style.width=f.dataset.w+'%'));
+
+  renderBars('gRecChart', G.recorrencia, {colorFn:(d,i)=>i===0?'linear-gradient(90deg,#9ca3af,#c4cad4)':'linear-gradient(90deg,#8b6fc9,#AD96DC)'});
+  const recTot=G.recorrencia.reduce((a,b)=>a+b.value,0), rec2=G.recorrencia.slice(1).reduce((a,b)=>a+b.value,0);
+  document.getElementById('gRecNote').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg><span><b>${fmt(rec2)} leads (${pct(rec2,recTot)}%)</b> se inscreveram em mais de uma captação. É o público mais engajado da base.</span>`;
+  renderBars('gFontesChart', G.fontes, {colorFn:fonteColor});
+  renderBars('gProfChart', G.profissoes, {colorFn:profColor});
+  renderGeo('gRegChart','gUfChart','gGeoTag', G.geo);
+}
+
+/* ── CAPTAÇÃO ── */
+function renderCapt(C){
+  document.getElementById('heroTag').textContent = `${C.nome} · ${per(C.periodo)}`;
+  document.getElementById('heroTitle').textContent = C.tema;
+  document.getElementById('heroNote').textContent = `${C.dias} dias de captação.`;
+  const media = C.total / C.dias;
+  document.getElementById('kpis').innerHTML = [
+    {l:'Leads únicos', v:fmt(C.total), s:`${fmt(C.cadastros)} cadastros · <b>${fmt(C.novos)}</b> novos na base`},
+    {l:'Investimento', v:brl0(C.spend), s:`Meta ${brl0(C.spend_meta)}${C.spend_google?` · Google ${brl0(C.spend_google)}`:''}`, c:'inv'},
+    {l:'CPL real', v:brl(C.cpl), s:`plataforma: ${brl(C.cpl_plat)}`, c:'cpl'},
+    {l:'Média por dia', v:fmt(Math.round(media)), s:`${per(C.periodo)}`},
+  ].map(k=>`<div class="kpi ${k.c||''}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.v.length>9?'sm':''}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const pago = C.meta_total + C.google_total;
+  document.getElementById('invMini').innerHTML = [
+    {l:'Meta Ads', v:brl(C.spend_meta), s:`${fmt(C.meta_total)} leads rastreados · CPL ${brl(C.meta_total?C.spend_meta/C.meta_total:null)}`},
+    {l:'Google Ads', v:C.spend_google?brl(C.spend_google):'—', s:C.spend_google?`${fmt(C.google_total)} leads rastreados · CPL ${brl(C.google_total?C.spend_google/C.google_total:null)}`:'sem campanha Google'},
+    {l:'Leads sem mídia paga', v:fmt(C.total-pago), s:`${pct(C.total-pago,C.total)}% vieram de e-mail, direto ou não rastreado`},
+  ].map(k=>`<div class="mini"><div class="mini-l">${k.l}</div><div class="mini-v">${k.v}</div><div class="mini-s">${k.s}</div></div>`).join('');
+
+  // diário / semanal
+  const sem = C.diario_gran==='semana';
+  document.getElementById('dailyTitle').textContent = sem?'Leads por semana':'Leads por dia';
+  document.getElementById('dailySub').textContent = (sem?'Volume semanal (segunda a domingo) · ':'Volume diário · ')+per(C.periodo);
+  document.getElementById('dailyTag').textContent = `${fmt(C.cadastros)} cadastros`;
+  const max=Math.max(1,...C.diario.map(d=>d.value));
+  document.getElementById('dailyChart').innerHTML = C.diario.map(d=>{
+    const h=Math.max(2,(d.value/max)*100), sd=shortDate(d.date);
+    return `<div class="dcol"><div class="dbar-wrap"><div class="dbar" style="height:0" data-h="${h}"><span class="dbar-v">${d.value}</span></div></div>
+      <div class="dcol-lbl">${sd.d}<small>${sem?'a '+weekEnd(d.date):sd.wd}</small></div></div>`;
+  }).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#dailyChart .dbar').forEach(b=>b.style.height=b.dataset.h+'%'));
+
+  // conjuntos Meta
+  const cj=C.conjuntos, bestCj=Math.min(...cj.filter(r=>r.cpl).map(r=>r.cpl));
+  document.getElementById('metaTag').textContent = `${fmt(C.meta_total)} leads Meta`;
+  const cjMax=Math.max(1,...cj.map(r=>r.value));
+  document.getElementById('adsetTab').innerHTML = '<thead><tr><th>Público</th><th style="width:34%">Leads na base</th><th class="r">Investimento</th><th class="r">CPL real</th><th class="r">Conv. plataforma</th></tr></thead><tbody>'+
+    cj.map(r=>`<tr><td style="font-weight:600">${esc(r.label)}</td>
+      <td><div class="hbar-track" style="height:20px"><div class="hbar-fill" style="width:${Math.max(2,100*r.value/cjMax)}%;background:linear-gradient(90deg,#0866FF,#3d8bff)"></div><div class="hbar-num ${100*r.value/cjMax>35?'inside':''}" style="left:${100*r.value/cjMax>35?0:100*r.value/cjMax+'%'};font-size:11px">${fmt(r.value)} <span class="pct">${pct(r.value,C.meta_total)}%</span></div></div></td>
+      <td class="num r">${brl(r.spend)}</td><td class="r"><span class="cpl-pill ${r.cpl===bestCj?'best':''}">${brl(r.cpl)}</span></td><td class="num r">${fmt(r.plat)}</td></tr>`).join('')+'</tbody>';
+
+  // google
+  const gc=document.getElementById('googleCard');
+  gc.style.display = C.google.length ? '' : 'none';
+  document.getElementById('googleTag').textContent = `${fmt(C.google_total)} leads Google`;
+  document.getElementById('googleTab').innerHTML = '<thead><tr><th>Campanha</th><th class="r">Leads na base</th><th class="r">Investimento</th><th class="r">CPL real</th></tr></thead><tbody>'+
+    C.google.map(r=>`<tr><td style="font-weight:600">${esc(r.label)}</td><td class="num r">${fmt(r.value)}</td><td class="num r">${brl(r.spend)}</td><td class="r"><span class="cpl-pill">${brl(r.cpl)}</span></td></tr>`).join('')+'</tbody>';
+
+  renderBars('profChart', C.profissoes, {total:C.total, colorFn:profColor});
+  renderBars('fontesChart', C.fontes, {total:C.total, colorFn:fonteColor});
+  renderBars('placeChart', C.posicionamentos);
+  renderGeo('regChart','ufChart','geoTag', C.geo);
+  utmTable('campTab', C.camp_tab, C.total); document.getElementById('campTabTag').textContent = C.camp_tab.length+' campanhas';
+  utmTable('medTab', C.med_tab, C.total); document.getElementById('medTabTag').textContent = C.med_tab.length+' mediums';
+}
+
+/* ── PNLD 2027 ── */
+const pIdx = u => u.sh_spend>0 ? u.sh_escolas/u.sh_spend : null;
+let bfInv='pnld', bfAgg='uf';
+function renderBf(){
+  const all = bfInv==='all';
+  const per=P.periodo_all;
+  document.getElementById('bfInv').innerHTML = [['pnld','Só PNLD'],['all','Conta toda · período dos webinars']].map(([k,t])=>`<button class="map-tab ${bfInv===k?'on':''}" onclick="bfInv='${k}';renderBf()">${t}</button>`).join('');
+  document.getElementById('bfAgg').innerHTML = [['uf','Por estado'],['reg','Por região']].map(([k,t])=>`<button class="map-tab ${bfAgg===k?'on':''}" onclick="bfAgg='${k}';renderBf()">${t}</button>`).join('');
+  document.getElementById('bfTitle').textContent = `Por ${bfAgg==='uf'?'estado':'região'}: investimento × escolhas`;
+  document.getElementById('bfSub').textContent = all
+    ? `À esquerda, % do investimento Meta de toda a conta (todas as campanhas) entre ${longDate(per.ini)} e ${longDate(per.fim)}: ${brl0(P.spend_all)}. À direita, % das escolas que escolheram a MK`
+    : `À esquerda, % do investimento das campanhas PNLD (${brl0(P.spend)}). À direita, % das escolas que escolheram a MK`;
+  document.getElementById('bfHeadL').textContent = all ? '% do investimento · conta toda' : '% do investimento · PNLD';
+  document.getElementById('bfHeadC').textContent = bfAgg==='uf' ? 'Estado' : 'Região';
+  let rows = P.ufs_list.map(u=>({nome:u.nome, sub:`${u.principal} 1ª · ${u.segunda} 2ª`, escolas:u.escolas, principal:u.principal, segunda:u.segunda,
+    sh_spend: all?u.sh_spend_all:u.sh_spend, spend: all?u.spend_all:u.spend, sh_escolas:u.sh_escolas}));
+  if(bfAgg==='reg'){
+    rows = ['Norte','Nordeste','Sudeste','Sul','Centro-Oeste'].map(r=>{
+      const us=P.ufs_list.filter(u=>u.reg===r), sm=k=>us.reduce((a,u)=>a+u[k],0);
+      return {nome:r, sub:`${sm('principal')} 1ª · ${sm('segunda')} 2ª`, escolas:sm('escolas'),
+        sh_spend: sm(all?'sh_spend_all':'sh_spend'), spend: sm(all?'spend_all':'spend'), sh_escolas: sm('sh_escolas')};
+    });
+  }
+  rows.sort((a,b)=>b.escolas-a.escolas||b.spend-a.spend);
+  document.getElementById('bfTag').textContent = bfAgg==='uf' ? '27 estados' : '5 regiões';
+  const mx=Math.max(...rows.map(u=>Math.max(u.sh_spend,u.sh_escolas)));
+  const el=document.getElementById('pBf');
+  el.innerHTML = rows.map(u=>{
+    const k=pClass(u), ws=100*u.sh_spend/mx, we=100*u.sh_escolas/mx;
+    return `<div class="bf-row" ${bfAgg==='reg'?'style="padding:4px 0"':''}>
+      <div class="bf-track l" ${bfAgg==='reg'?'style="height:28px"':''}><div class="bf-fill" style="width:0" data-w="${ws}"></div><div class="bf-v" style="${ws>38?'color:#fff':'right:'+ws+'%'}">${u.sh_spend.toFixed(1).replace('.',',')}% · ${brl0(u.spend)}</div></div>
+      <div class="bf-uf" title="${u.nome}">${u.nome}<small>${u.sub}</small></div>
+      <div class="bf-track r" ${bfAgg==='reg'?'style="height:28px"':''}><div class="bf-fill" style="width:0" data-w="${we}"></div><div class="bf-v" style="${we>38?'color:#fff':'left:'+we+'%'}">${u.sh_escolas.toFixed(1).replace('.',',')}% · ${fmt(u.escolas)}</div></div>
+      <span class="idx ${k.c}">${k.t}</span></div>`;
+  }).join('');
+  requestAnimationFrame(()=>el.querySelectorAll('.bf-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+function pClass(u){
+  const r=pIdx(u);
+  if(r==null) return {c:'op', t:'Sem investimento'};
+  if(r>=1.5) return {c:'op', t:`Escolha acima · ${r.toFixed(1).replace('.',',')}×`};
+  if(r<=0.67) return {c:'ac', t:`Invest. acima · ${r.toFixed(1).replace('.',',')}×`};
+  return {c:'al', t:`Alinhado · ${r.toFixed(1).replace('.',',')}×`};
+}
+const MAP_LAYERS = [
+  {k:'escolas', t:'Escolas que escolheram a MK', c:[18,161,80], f:v=>fmt(v)+' escolas'},
+  {k:'principal', t:'Escolas · 1ª opção', c:[18,161,80], f:v=>fmt(v)+' de 1ª opção'},
+  {k:'spend', t:'Investimento PNLD', c:[139,111,201], f:v=>brl0(v)},
+  {k:'spend_all', t:'Investimento conta toda', c:[229,144,77], f:v=>brl0(v)},
+  {k:'leads_web', t:'Leads dos webinars', c:[0,174,239], f:v=>fmt(v)+' leads'},
+];
+let mapLayer = 'escolas';
+function renderMap(U){
+  const M=P.map, svg=document.getElementById('brMap'), L=MAP_LAYERS.find(l=>l.k===mapLayer);
+  document.getElementById('mapTabs').innerHTML = MAP_LAYERS.map(l=>`<button class="map-tab ${l.k===mapLayer?'on':''}" onclick="mapLayer='${l.k}';renderMap(P.ufs_list)"><i style="background:rgb(${l.c})"></i>${l.t}</button>`).join('');
+  const by=Object.fromEntries(U.map(u=>[u.uf,u])), max=Math.max(...U.map(u=>u[L.k]));
+  const col=v=>{const t=Math.sqrt(v/max); return `rgba(${L.c},${(0.08+0.92*t).toFixed(3)})`;};
+  if(!svg.dataset.built){
+    svg.setAttribute('viewBox', M.viewBox);
+    svg.innerHTML = Object.entries(M.paths).map(([uf,d])=>`<path data-uf="${uf}" d="${d}"></path>`).join('') + '<g id="mapLbl"></g>';
+    requestAnimationFrame(()=>{
+      document.getElementById('mapLbl').innerHTML = [...svg.querySelectorAll('path')].map(p=>{const b=p.getBBox(); const off={DF:[8,-6],RJ:[6,6],ES:[8,0],SE:[8,4],AL:[10,2],PB:[12,0],RN:[8,-2],PE:[0,0],SC:[0,0]}[p.dataset.uf]||[0,0];
+        return `<text data-uf="${p.dataset.uf}" x="${b.x+b.width/2+off[0]}" y="${b.y+b.height/2+off[1]}">${p.dataset.uf}</text>`;}).join('');
+      paint();
+    });
+    const tip=document.getElementById('mapTip'), box=svg.parentElement;
+    svg.addEventListener('mousemove',e=>{
+      const p=e.target.closest('path'); if(!p){tip.style.opacity=0;return;}
+      const u=P.ufs_list.find(x=>x.uf===p.dataset.uf), r=box.getBoundingClientRect();
+      tip.innerHTML=`<b>${u.nome}</b><div><span>Escolas (1ª · 2ª)</span><span>${u.escolas} (${u.principal} · ${u.segunda})</span></div><div><span>Alunos 3º–5º</span><span>${fmt(u.alunos)}</span></div><div><span>Investimento PNLD</span><span>${brl0(u.spend)}</span></div><div><span>Invest. conta toda*</span><span>${brl0(u.spend_all)}</span></div><div><span>Leads webinars</span><span>${fmt(u.leads_web)}</span></div><div><span>W01 · W02 · W03</span><span>${u.leads_w.w1} · ${u.leads_w.w2} · ${u.leads_w.w3}</span></div>`;
+      let x=e.clientX-r.left+14, y=e.clientY-r.top+14; if(x+210>r.width) x-=230;
+      tip.style.left=x+'px'; tip.style.top=y+'px'; tip.style.opacity=1;
+    });
+    svg.addEventListener('mouseleave',()=>tip.style.opacity=0);
+    svg.dataset.built=1;
+  }
+  function paint(){
+    svg.querySelectorAll('path').forEach(p=>{const v=(by[p.dataset.uf]||{})[L.k]||0; p.style.fill=col(v);});
+    svg.querySelectorAll('text').forEach(t=>{const v=(by[t.dataset.uf]||{})[L.k]||0; t.style.fill=Math.sqrt(v/max)>0.55?'#fff':'var(--text)';});
+  }
+  paint();
+  document.getElementById('legBar').style.background=`linear-gradient(90deg,rgba(${L.c},.08),rgb(${L.c}))`;
+  document.getElementById('legMax').textContent=L.f(max);
+  document.getElementById('mapSideT').textContent=`Top 10 · ${L.t}`;
+  const tot=U.reduce((a,u)=>a+u[L.k],0);
+  renderBars('mapTop', U.slice().sort((a,b)=>b[L.k]-a[L.k]).slice(0,10).map(u=>({label:u.nome, value:u[L.k], reg:u.reg})),
+    {total:tot, colorFn:()=>`rgb(${L.c})`, valFmt:d=>`${L.k.startsWith('spend')?brl0(d.value):fmt(d.value)} <span class="pct">${pct(d.value,tot)}%</span>`, insideMin:55});
+}
+function renderPnld(){
+  const U=P.ufs_list.slice().sort((a,b)=>b.escolas-a.escolas||b.spend-a.spend);
+  const comInv=U.filter(u=>u.spend>0).length;
+  document.getElementById('pHeroTitle').textContent = `Escolhidos nos ${P.ufs} estados: ${fmt(P.principal)} escolas como 1ª opção e ${fmt(P.segunda)} como 2ª`;
+  document.getElementById('pKpis').innerHTML = [
+    {l:'Escolas que escolheram a MK', v:fmt(P.escolas), s:`<b>${fmt(P.principal)}</b> 1ª opção · ${fmt(P.segunda)} 2ª opção`, c:'pn'},
+    {l:'Alunos do 3º ao 5º ano', v:fmt(P.alunos), s:`<b>${fmt(P.alunos_principal)}</b> nas escolas de 1ª opção`, c:'pn'},
+    {l:'Cobertura', v:`${P.ufs}/27`, s:`estados · ${fmt(P.municipios)} municípios · investimento em ${comInv}/27`},
+    {l:'Investimento PNLD', v:brl0(P.spend), s:`${brl(P.spend/P.escolas)} por escola escolhida`, c:'inv'},
+  ].map(k=>`<div class="kpi ${k.c||''}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.v.length>9?'sm':''}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  // regiões
+  const REGS=['Norte','Nordeste','Sudeste','Sul','Centro-Oeste'];
+  const webTot=U.reduce((a,u)=>a+u.leads_web,0);
+  document.getElementById('pReg').innerHTML = REGS.map(r=>{
+    const us=U.filter(u=>u.reg===r), e=us.reduce((a,u)=>a+u.sh_escolas,0), s=us.reduce((a,u)=>a+u.sh_spend,0);
+    const w=100*us.reduce((a,u)=>a+u.leads_web,0)/webTot, mxr=Math.max(e,s,w,1);
+    return `<div class="rc" style="--c:${REGCOLOR[r]}"><div class="rc-n">${r}</div>
+      <div class="rc-line">Escolhas <b>${e.toFixed(0)}%</b></div><div class="rc-line">Investimento <b>${s.toFixed(0)}%</b></div>
+      <div class="rc-line">Leads webinars <b>${w.toFixed(0)}%</b></div>
+      <div class="rc-bar3"><div style="width:${e/45*100}%;background:#12A150"></div><div style="width:${s/45*100}%;background:#8b6fc9"></div><div style="width:${w/45*100}%;background:#00AEEF"></div></div></div>`;
+  }).join('');
+  renderMap(U);
+
+  renderBf();
+
+  // matches
+  const M=P.matches, m1=M.filter(m=>m.pos==='Principal').length;
+  document.getElementById('pMatchTag').textContent = `${M.length} escolas · ${m1} de 1ª opção`;
+  document.getElementById('pMatch').innerHTML = M.map(m=>`<div class="mt">
+    <div class="mt-n">${esc(m.escola)}</div>
+    <div class="mt-s">${esc(m.mun)} · ${m.uf} · rede ${m.rede.toLowerCase()} · ${fmt(m.alunos)} alunos (3º–5º)</div>
+    <div class="mt-tags"><span class="mt-tag ${m.pos==='Principal'?'p1':'p2'}">${m.pos==='Principal'?'1ª opção':'2ª opção'}</span>${m.capts.map(c=>`<span class="mt-tag">${esc(c)}</span>`).join('')}</div></div>`).join('');
+
+  // municípios
+  const renderMun = (elId, arr, color) => {
+    const max=Math.max(1,...arr.map(m=>m.escolas)), el=document.getElementById(elId);
+    el.innerHTML = arr.map(m=>{
+      const w=Math.max(2,100*m.escolas/max), inside=w>30;
+      return `<div class="ufb"><div class="ufb-l"><div class="ufb-name" title="${esc(m.mun)}">${esc(m.mun)} · ${m.uf}</div><div class="ufb-ddd">${fmt(m.alunos)} alunos (3º–5º)</div></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:0;background:${color}" data-w="${w}"></div>
+        <div class="hbar-num ${inside?'inside':''}" style="${inside?'left:0':'left:'+w+'%'}">${fmt(m.escolas)} escolas</div></div></div>`;
+    }).join('');
+    requestAnimationFrame(()=>el.querySelectorAll('.hbar-fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+  };
+  renderMun('pMun1', P.top_mun_1, 'linear-gradient(90deg,#12A150,#4ad07f)');
+  renderMun('pMun2', P.top_mun_2, 'linear-gradient(90deg,#8f96a3,#b8bec9)');
+
+  // investimento
+  const [ini,fim]=[P.periodo.ini,P.periodo.fim];
+  document.getElementById('pInvSub').textContent = `${longDate(ini)} a ${longDate(fim)} · entrega por estado`;
+  document.getElementById('pInv').innerHTML = [
+    ...P.campanhas.map(c=>({l:c.nome.replace('SOBE-',''), v:brl(c.spend), s:`${fmt(c.imp)} impressões`})),
+  ].map(k=>`<div class="mini"><div class="mini-l">${k.l}</div><div class="mini-v">${k.v}</div><div class="mini-s">${k.s}</div></div>`).join('');
+  renderBars('pRede', Object.entries(P.rede).map(([k,v])=>({label:'Rede '+k.toLowerCase(), value:v})),
+    {total:P.escolas, colorFn:()=> 'linear-gradient(90deg,#12A150,#4ad07f)', valFmt:d=>`${fmt(d.value)} escolas <span class="pct">${pct(d.value,P.escolas)}%</span>`, insideMin:60});
+
+  // tabela
+  const T=U, head='<thead><tr><th>Estado</th><th class="r">1ª opção</th><th class="r">2ª opção</th><th class="r">Escolas</th><th class="r">Alunos</th><th class="r">Investimento</th><th class="r">% invest.</th><th class="r">% escolas</th><th class="r">R$/escola</th><th class="r">Alcance</th><th class="r">Leads base</th></tr></thead>';
+  const sum=k=>T.reduce((a,u)=>a+u[k],0);
+  document.getElementById('pTab').innerHTML = head+'<tbody>'+T.map(u=>`<tr><td class="capt"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${REGCOLOR[u.reg]};margin-right:7px"></span>${u.nome}<small>${u.reg} · ${u.municipios} municípios</small></td>
+    <td class="num r">${fmt(u.principal)}</td><td class="num r">${fmt(u.segunda)}</td><td class="num r"><b>${fmt(u.escolas)}</b></td><td class="num r">${fmt(u.alunos)}</td>
+    <td class="num r">${brl(u.spend)}</td><td class="pctc r">${u.sh_spend.toFixed(1)}%</td><td class="pctc r">${u.sh_escolas.toFixed(1)}%</td>
+    <td class="num r">${brl(u.custo_escola)}</td><td class="num r">${fmt(u.alcance)}</td><td class="num r">${fmt(u.leads_base)}</td></tr>`).join('')+
+    `<tr class="tot"><td>Total</td><td class="num r">${fmt(sum('principal'))}</td><td class="num r">${fmt(sum('segunda'))}</td><td class="num r">${fmt(sum('escolas'))}</td><td class="num r">${fmt(sum('alunos'))}</td><td class="num r">${brl(sum('spend'))}</td><td class="pctc r">100%</td><td class="pctc r">100%</td><td class="num r">${brl(sum('spend')/sum('escolas'))}</td><td class="num r">${fmt(sum('alcance'))}</td><td class="num r">${fmt(sum('leads_base'))}</td></tr></tbody>`;
+}
+
+/* ── WHATSAPP / E-BOOK ── */
+const W = D.whats;
+let wSel = W[0].k;
+function renderWhats(){
+  const sp=W.reduce((a,c)=>a+c.spend,0), ld=W.reduce((a,c)=>a+c.leads,0), imp=W.reduce((a,c)=>a+c.imp,0);
+  document.getElementById('wKpis').innerHTML = [
+    {l:'Investimento', v:brl0(sp), s:`${W.length} captações · Meta Ads`, c:'inv'},
+    {l:'Leads (Meta)', v:fmt(ld), s:`WhatsApp / download de e-book`, c:'wa'},
+    {l:'CPL médio', v:brl(sp/ld), s:`investimento ÷ leads`, c:'cpl'},
+    {l:'Impressões', v:fmt(imp), s:`CPM ${brl(1000*sp/imp)}`},
+  ].map(k=>`<div class="kpi ${k.c||''}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.v.length>9?'sm':''}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+  const best=Math.min(...W.filter(c=>c.cpl).map(c=>c.cpl));
+  document.getElementById('wCmp').innerHTML = '<thead><tr><th>Captação</th><th class="r">Investimento</th><th class="r">Leads</th><th class="r">CPL</th><th class="r">Impressões</th><th class="r">CTR</th><th class="r">Visualiz. LP</th></tr></thead><tbody>'+
+    W.map(c=>`<tr class="clk" onclick="wSel='${c.k}';renderWDetail();document.getElementById('wTabs').scrollIntoView({behavior:'smooth'})"><td class="capt">${c.nome}<small>${per(c.periodo)} · ${c.camps.join(', ')}</small></td>
+      <td class="num r">${brl(c.spend)}</td><td class="num r">${fmt(c.leads)}</td><td class="r"><span class="cpl-pill ${c.cpl===best?'best':''}">${brl(c.cpl)}</span></td>
+      <td class="num r">${fmt(c.imp)}</td><td class="num r">${c.ctr!=null?c.ctr.toFixed(2).replace('.',',')+'%':'—'}</td><td class="num r">${fmt(c.lpv)}</td></tr>`).join('')+
+    `<tr class="tot"><td>Total</td><td class="num r">${brl(sp)}</td><td class="num r">${fmt(ld)}</td><td class="r"><span class="cpl-pill">${brl(sp/ld)}</span></td><td class="num r">${fmt(imp)}</td><td></td><td class="num r">${fmt(W.reduce((a,c)=>a+c.lpv,0))}</td></tr></tbody>`;
+  renderWDetail();
+}
+function renderWDetail(){
+  const C=W.find(c=>c.k===wSel);
+  document.getElementById('wTabs').innerHTML = W.map(c=>`<button class="map-tab ${c.k===wSel?'on':''}" onclick="wSel='${c.k}';renderWDetail()"><i style="background:#25D366"></i>${c.nome}</button>`).join('');
+  document.getElementById('wTitle').textContent = C.nome;
+  document.getElementById('wSub').textContent = `${per(C.periodo)} · ${C.dias} dias · ${C.camps.join(', ')}`;
+  document.getElementById('wTag').textContent = `CPL ${brl(C.cpl)}`;
+  document.getElementById('wMini').innerHTML = [
+    {l:'Investimento', v:brl(C.spend), s:`CPM ${brl(C.cpm)}`},
+    {l:'Leads (Meta)', v:fmt(C.leads), s:`CPL ${brl(C.cpl)}`},
+    {l:'Cliques no link', v:fmt(C.cliques), s:`CTR ${C.ctr!=null?C.ctr.toFixed(2).replace('.',','):'—'}% · ${fmt(C.imp)} impressões`},
+    {l:'Visualizações da LP', v:fmt(C.lpv), s:C.conv_lpv!=null?`${String(C.conv_lpv).replace('.',',')}% viraram lead`:'—'},
+  ].map(k=>`<div class="mini"><div class="mini-l">${k.l}</div><div class="mini-v">${k.v}</div><div class="mini-s">${k.s}</div></div>`).join('');
+  document.getElementById('wPnldLink').innerHTML = C.camps.some(c=>c.includes('PNLD')) ? `<button class="go-pnld" onclick="go('pnld')">Ver o resultado das escolhas do PNLD 2027 →</button>` : '';
+  const sem=C.serie_gran==='semana';
+  document.getElementById('wSerieT').textContent = sem ? 'Leads por semana' : 'Leads por dia';
+  const mx=Math.max(1,...C.serie.map(d=>d.leads));
+  document.getElementById('wSerie').innerHTML = C.serie.map(d=>{const h=Math.max(2,100*d.leads/mx), sd=shortDate(d.date);
+    return `<div class="dcol"><div class="dbar-wrap"><div class="dbar" style="height:0;background:linear-gradient(180deg,#25D366,#12A150)" data-h="${h}"><span class="dbar-v">${d.leads}</span></div></div>
+      <div class="dcol-lbl">${sd.d} a ${weekEnd(d.date)}<small>${brl0(d.spend)}</small></div></div>`;}).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#wSerie .dbar').forEach(b=>b.style.height=b.dataset.h+'%'));
+  const multi=C.camps.length>1, bp=Math.min(...C.publicos.filter(r=>r.cpl).map(r=>r.cpl));
+  document.getElementById('wPub').innerHTML = `<thead><tr><th>Público</th>${multi?'<th>Campanha</th>':''}<th class="r">Investimento</th><th class="r">Leads</th><th class="r">CPL</th><th class="r">Impressões</th></tr></thead><tbody>`+
+    C.publicos.map(r=>`<tr><td style="font-weight:600">${esc(r.label)}</td>${multi?`<td class="utm">${esc(r.camp)}</td>`:''}<td class="num r">${brl(r.spend)}</td><td class="num r">${fmt(r.leads)}</td><td class="r"><span class="cpl-pill ${r.cpl===bp&&C.publicos.length>1?'best':''}">${brl(r.cpl)}</span></td><td class="num r">${fmt(r.imp)}</td></tr>`).join('')+'</tbody>';
+  document.getElementById('wAdsTag').textContent = `${C.anuncios.length} anúncio${C.anuncios.length>1?'s':''}`;
+  const ba=Math.min(...C.anuncios.filter(a=>a.cpl&&a.leads>=10).map(a=>a.cpl));
+  document.getElementById('wAds').innerHTML = C.anuncios.map(a=>`<div class="ad"><div class="ad-img" style="${a.img?`background-image:url('${a.img}')`:''}"></div>
+    <div class="ad-b"><div class="ad-n">${esc(a.nome)}${a.cpl===ba&&C.anuncios.length>1?'<span class="ad-rank">menor CPL</span>':''}</div><div class="ad-c">${multi?esc(a.camp)+' · ':''}${per({ini:a.ini,fim:a.fim})}</div>
+    <div class="ad-m"><div>Invest.<b>${brl0(a.spend)}</b></div><div>Leads<b>${fmt(a.leads)}</b></div><div>CPL<b>${brl(a.cpl)}</b></div><div>CTR<b>${a.ctr!=null?a.ctr.toFixed(2).replace('.',',')+'%':'—'}</b></div></div></div></div>`).join('');
+}
+/* ── navegação ── */
+function go(k, anchor){
+  const isG = k==='geral', isP = k==='pnld', isW = k==='whats';
+  document.getElementById('v-geral').classList.toggle('on', isG);
+  document.getElementById('v-pnld').classList.toggle('on', isP);
+  document.getElementById('v-whats').classList.toggle('on', isW);
+  document.getElementById('v-capt').classList.toggle('on', !isG && !isP && !isW);
+  if(isW){ renderWhats(); document.getElementById('pageTitle').textContent='WhatsApp / e-book';
+    document.getElementById('badgeTotal').textContent=`${fmt(W.reduce((a,c)=>a+c.leads,0))} leads Meta`; }
+  else if(isP){ renderPnld(); document.getElementById('pageTitle').textContent='PNLD 2027 · Escolhas × Investimento';
+    document.getElementById('badgeTotal').textContent=`${fmt(P.escolas)} escolas · ${P.ufs} estados`; }
+  else if(isG){ renderGeral(); document.getElementById('pageTitle').textContent='Relatório de Captações';
+    document.getElementById('badgeTotal').textContent=`${fmt(G.unicos)} leads únicos`; }
+  else { const C=CAPTS.find(c=>c.k===k); renderCapt(C); document.getElementById('pageTitle').textContent=C.titulo;
+    document.getElementById('badgeTotal').textContent=`${fmt(C.total)} leads · CPL ${brl(C.cpl)}`; }
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.toggle('active', b.dataset.k===k));
+  document.querySelectorAll('.sb-item[data-v]').forEach(a=>a.classList.toggle('active', a.dataset.v===k));
+  closeSb();
+  if(anchor) setTimeout(()=>document.querySelector(anchor).scrollIntoView({behavior:'smooth'}),60);
+  else window.scrollTo({top:0,behavior:'smooth'});
+  try{ history.replaceState(null,'','#'+k); }catch(e){}
+}
+function toggleTheme(){
+  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';
+  document.getElementById('themeLabel').textContent=dark?'Escuro':'Claro';
+}
+function toggleSb(){document.getElementById('sidebar').classList.toggle('open');}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');}
+
+document.getElementById('switcher').innerHTML = `<button class="sw-btn" data-k="geral" onclick="go('geral')">Visão geral</button>` +
+  CAPTS.map(c=>`<button class="sw-btn" data-k="${c.k}" onclick="go('${c.k}')">${c.nome}</button>`).join('') +
+  `<button class="sw-btn" data-k="whats" onclick="go('whats')">WhatsApp / e-book</button>` +
+  `<button class="sw-btn" data-k="pnld" onclick="go('pnld')">PNLD 2027 · Escolhas</button>`;
+document.getElementById('sbCapts').innerHTML = CAPTS.map(c=>`<a class="sb-item" data-v="${c.k}" onclick="go('${c.k}')"><span class="dot" style="background:${CAPT_COLOR[c.k]}"></span>${c.nome}</a>`).join('');
+document.getElementById('footGen').textContent = 'Atualizado ' + G.gerado;
+document.getElementById('genFoot').textContent = G.gerado;
+const start = (location.hash||'').slice(1);
+go(CAPTS.some(c=>c.k===start)||['pnld','whats'].includes(start) ? start : 'geral');
+</script>
+</body>
+</html>
