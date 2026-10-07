@@ -60,6 +60,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .sb-brand{display:flex;align-items:center;gap:9px;margin-top:10px;}
 .sb-brand img{width:26px;height:26px;border-radius:7px;background:#fff;padding:2px;}
 .tb-r{display:flex;align-items:center;gap:14px;}
+.tb-back{font-size:11.5px;font-weight:700;color:var(--accent-2);text-decoration:none;padding:5px 11px;border-radius:8px;background:var(--accent-soft);white-space:nowrap;}
+.tb-back:hover{filter:brightness(1.05);}
 .tb-brand{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);}
 .tb-brand img{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:#fff;}
 @media(max-width:600px){.tb-brand span{display:none;}}
@@ -348,7 +350,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <div class="page-title" id="pageTitle">Relatório de Captações</div>
         <span class="tb-badge"><span class="pulse"></span><span id="badgeTotal">—</span></span>
       </div>
-      <div class="tb-r"><span class="tb-brand"><img src="__LOGO_SOBE__" alt="Sobé"><span>Sobé Estratégias</span></span>
+      <div class="tb-r"><a class="tb-back" href="./index.html">← Dashboard</a><span class="tb-brand"><img src="__LOGO_SOBE__" alt="Sobé"><span>Sobé Estratégias</span></span>
       <button class="theme-btn" onclick="toggleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Escuro</span></button></div>
     </div>
 

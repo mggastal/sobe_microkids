@@ -57,6 +57,22 @@ window.DASH_BASE_URL = '${BASE_URL}';
 <\/script>`;
       templateHtml = templateHtml.replace('</head>', dataScript + '</head>');
 
+      // Atalhos para relatórios deste cliente (só Microkids, não mexe no template central)
+      const RELATORIO_URL = './captacoes.html';
+      const RELATORIO_LBL = 'Relatório Out2026';
+      const relCss = `<style>
+.rel-btn{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:5px 12px;border-radius:8px;background:#AD96DC;color:#fff!important;font-size:11.5px;font-weight:700;text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(173,150,220,.35);}
+.rel-btn:hover{filter:brightness(1.07);}
+@media(max-width:700px){.rel-btn span{display:none;}}
+</style>`;
+      templateHtml = templateHtml.replace('</head>', relCss + '</head>');
+      templateHtml = templateHtml.replace('<span id="liveTxt">—</span></div>',
+        `<span id="liveTxt">—</span></div><a class="rel-btn" href="${RELATORIO_URL}" title="${RELATORIO_LBL}">📊<span>${RELATORIO_LBL}</span></a>`);
+      templateHtml = templateHtml.replace('<div class="sb-footer">',
+        `<div class="sb-section" style="padding-top:0"><div class="sb-platform-group"><div class="sb-platform-hd"><div class="sb-platform-icon" style="background:linear-gradient(135deg,#8b6fc9,#AD96DC)">📊</div><span class="sb-platform-lbl">Relatórios</span></div>` +
+        `<a href="${RELATORIO_URL}" class="sb-item">${RELATORIO_LBL}</a></div></div>
+  <div class="sb-footer">`);
+
       document.open();
       document.write(templateHtml);
       document.close();
