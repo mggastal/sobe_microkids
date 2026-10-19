@@ -312,7 +312,12 @@ def thumb_data(url):
     """Miniatura já baixada pelo dashboard.py (imgs/<md5>.ext), embutida em base64."""
     if not isinstance(url, str) or not url: return None
     ext = ".png" if ".png" in url.lower() else ".jpg"
-    fp = Path(__file__).parent / "imgs" / (hashlib.md5(url.encode()).hexdigest()[:16] + ext)
+    # mesmo nome que o dashboard.py usa: host+caminho (sem a query assinada da Meta); cai no antigo se não achar
+    from urllib.parse import urlparse
+    import re as _re
+    _p = urlparse(url); _k = _p.netloc + _p.path if _re.search(r"\.(jpe?g|png|webp|gif)$", _p.path, _re.I) else url
+    fp = Path(__file__).parent / "imgs" / (hashlib.md5(_k.encode()).hexdigest()[:16] + ext)
+    if not fp.exists(): fp = Path(__file__).parent / "imgs" / (hashlib.md5(url.encode()).hexdigest()[:16] + ext)
     if not fp.exists(): return None
     try:  # reduz para 320px para o HTML não ficar pesado
         from PIL import Image
