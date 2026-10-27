@@ -65,6 +65,9 @@ window.DASH_BASE_URL = '${BASE_URL}';
         `<a href="${RELATORIO_URL}" class="sb-item">${RELATORIO_LBL}</a></div></div>
   <div class="sb-footer">`);
 
+      // Criativos do LinkedIn (script só deste cliente)
+      templateHtml = templateHtml.replace('</body>', '<script src="./li_criativos.js"><\/script></body>');
+
       document.open();
       document.write(templateHtml);
       document.close();
