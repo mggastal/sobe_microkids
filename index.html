@@ -58,11 +58,10 @@ window.DASH_BASE_URL = '${BASE_URL}';
       templateHtml = templateHtml.replace('</head>', dataScript + '</head>');
 
       // Atalho no menu lateral para relatórios deste cliente (só Microkids, não mexe no template central)
-      const RELATORIO_URL = './captacoes.html';
-      const RELATORIO_LBL = 'Relatório Out2026';
+      const RELATORIOS = [['./captacoes_nov2026.html','Relatório Nov2026'],['./captacoes.html','Relatório Out2026']];
       templateHtml = templateHtml.replace('<div class="sb-footer">',
         `<div class="sb-section" style="padding-top:0"><div class="sb-platform-group"><div class="sb-platform-hd"><div class="sb-platform-icon" style="background:linear-gradient(135deg,#8b6fc9,#AD96DC)">📊</div><span class="sb-platform-lbl">Relatórios</span></div>` +
-        `<a href="${RELATORIO_URL}" class="sb-item">${RELATORIO_LBL}</a></div></div>
+        RELATORIOS.map(([u,l])=>`<a href="${u}" class="sb-item">${l}</a>`).join('') + `</div></div>
   <div class="sb-footer">`);
 
       // Criativos do LinkedIn (script só deste cliente)

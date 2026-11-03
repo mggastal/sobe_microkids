@@ -15,7 +15,8 @@ LEADS_XLSX = sys.argv[1] if len(sys.argv) > 1 else str(Path.home() / "Downloads/
 PNLD_XLSX  = str(Path.home() / "Downloads/Escolas_Exploradores_Digitais_PNLD_2027_matriculas (2).xlsx")
 META_UF_XLS = str(Path.home() / "Downloads/CA---Microkids-Campanhas-7-de-set-de-2023-6-de-out-de-2026.xls")
 SHEET_ID   = "1kKLTG5P6dPwYmXIRBm2DucM0bjk-rZJ0mzVNf3uyq5k"
-OUT_HTML   = Path(__file__).with_name("captacoes.html")
+# Cada relatório mensal é um arquivo próprio e fixo; mudar aqui ao gerar o próximo mês
+OUT_HTML   = Path(__file__).with_name("captacoes_nov2026.html")
 TEMPLATE   = Path(__file__).with_name("captacoes_template.html")
 
 def sheet_url(t): return f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={t}"
@@ -41,10 +42,14 @@ CAPTS = [
     {"k": "w3",   "nome": "Webinar 03", "titulo": "Webinar 03 · Conexões que Cuidam",
      "tema": "Webinário Conexões que Cuidam (setembro)",
      "meta": ["SOBE-WEBNARIO03-CAPTACAO"], "google": ["SOBE-WEBNARIO03-CAPTACAO-DEMANDGEN-YOUTUBE"]},
+    {"k": "w4",   "nome": "Webinar 04", "titulo": "Webinar 04 · IA na Educação",
+     "tema": "Webinário IA na Educação (outubro)",
+     "meta": ["SOBE-WEBNARIO04-CAPTACAO"], "google": ["SOBE-WEBNARIO04-CAPTACAO-DEMANDGEN-YOUTUBE"]},
     {"k": "bncc", "nome": "Computação Desplugada", "titulo": "Computação Desplugada · BNCC",
-     "tema": "Material BNCC — Computação Desplugada (set/out)",
+     "tema": "Material BNCC — Computação Desplugada (set/nov)",
      "meta": ["SOBE-BNCC"], "google": []},
 ]
+WEBINARS = ["w1", "w2", "w3", "w4"]
 # Captações de WhatsApp / e-book: leads ficam fora desta base → CPL pela conversão da plataforma
 EXTRA_META = [
     {"nome": "PNLD 2027", "tipo": "WhatsApp / e-book", "camps": ["SOBE-PNLD2027-CAPTACAO"]},
@@ -60,6 +65,7 @@ def capt_of(row):
     if pg in ("webinar-educacao", "computacaodesplugada") and d < pd.Timestamp("2026-09-01"):
         return "w2"
     if pg == "webinarmk-conexoesquecuidam": return "w3"
+    if pg == "webinar-ia-educacao": return "w4"
     if pg == "computacaodesplugada": return "bncc"
     return "outros"
 
@@ -68,7 +74,7 @@ PLACEMENTS = {"Instagram_Feed", "Instagram_Stories", "Instagram_Reels", "Faceboo
               "Facebook_Mobile_Reels", "Facebook_Stories", "Facebook_Desktop_Feed", "Threads_Feed",
               "Whatsapp_Status", "Facebook_Profile_Feed", "Instagram_Explore_Grid_Home",
               "Facebook_Instream_Video", "Others", "an"}
-GOOGLE_CAMPS = {"pmax", "search", "youtube_demand_gen"}
+GOOGLE_CAMPS = {"pmax", "search", "youtube_demand_gen", "GOOGLE-ADS-YOUTUBE"}
 EMPTY = {"undefined", "nan", "", "{{placement}}", "{{campaign.name}}", "{{adset.name}}", "{{ad.name}}"}
 
 def fonte(r):
@@ -95,8 +101,8 @@ ADSET_LBL = {
     "01-LAL1%-LEADS-SINEPE": "Lookalike 1% · SINEPE",
     "01-LAL1%-13CONG-PARTICIPANTES": "Lookalike 1% · 13º Congresso",
 }
-GOOGLE_LBL = {"pmax": "Performance Max", "youtube_demand_gen": "YouTube · Demand Gen", "search": "Search · Pesquisa"}
-GOOGLE_CAMP_OF = {"pmax": "PMAX", "youtube_demand_gen": "DEMANDGEN-YOUTUBE", "search": "SEARCH"}
+GOOGLE_LBL = {"pmax": "Performance Max", "youtube_demand_gen": "YouTube · Demand Gen", "search": "Search · Pesquisa", "GOOGLE-ADS-YOUTUBE": "YouTube · Demand Gen"}
+GOOGLE_CAMP_OF = {"pmax": "PMAX", "youtube_demand_gen": "DEMANDGEN-YOUTUBE", "search": "SEARCH", "GOOGLE-ADS-YOUTUBE": "DEMANDGEN-YOUTUBE"}
 
 PROF_RULES = [
     ("Estudante / Em formação", r"estud|estagi|est[aá]gio|graduand|universit|aluno|acad[eê]mic|licenciand|doutorand|mestrand"),
@@ -143,6 +149,7 @@ def load_leads():
     df = pd.read_excel(LEADS_XLSX, sheet_name=0)
     for c in ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "pagina"]:
         df[c] = df[c].astype(str).str.strip()
+    df["utm_medium"] = df["utm_medium"].replace({"00-SEGUIDORES ENG180 LEADS": "00-SEGUIDORES+ENG180+LEADS"})  # "+" virou espaço na URL
     df["email"] = df["Email"].astype(str).str.strip().str.lower()
     teste = df["Nome"].astype(str).str.contains("teste", case=False) | df["email"].str.contains(
         r"@microkids\.com|@sobe\.|sandeepravi|teste@", regex=True)
@@ -297,8 +304,8 @@ def build():
         "extras": extras,
         "gerado": pd.Timestamp.now().strftime("%d/%m/%Y %H:%M"),
     }
-    web_ini = min(c["periodo"]["ini"] for c in resumo if c["k"] in ("w1", "w2", "w3"))
-    web_fim = max(c["periodo"]["fim"] for c in resumo if c["k"] in ("w1", "w2", "w3"))
+    web_ini = min(c["periodo"]["ini"] for c in resumo if c["k"] in WEBINARS)
+    web_fim = max(c["periodo"]["fim"] for c in resumo if c["k"] in WEBINARS)
     out["pnld"] = build_pnld(leads, web_ini, web_fim)
     html = TEMPLATE.read_text(encoding="utf-8").replace("/*__DATA__*/null", json.dumps(out, ensure_ascii=False))
     here = Path(__file__).parent
@@ -318,17 +325,54 @@ def thumb_data(url):
     _p = urlparse(url); _k = _p.netloc + _p.path if _re.search(r"\.(jpe?g|png|webp|gif)$", _p.path, _re.I) else url
     fp = Path(__file__).parent / "imgs" / (hashlib.md5(_k.encode()).hexdigest()[:16] + ext)
     if not fp.exists(): fp = Path(__file__).parent / "imgs" / (hashlib.md5(url.encode()).hexdigest()[:16] + ext)
-    if not fp.exists(): return None
+    if not fp.exists():  # imgs/ não fica no clone local (sparse-checkout): busca no GitHub Pages
+        for nome in (hashlib.md5(_k.encode()).hexdigest()[:16] + ext, hashlib.md5(url.encode()).hexdigest()[:16] + ext):
+            r = subprocess.run(["curl", "-sfL", f"https://mggastal.github.io/sobe_microkids/imgs/{nome}"], capture_output=True)
+            if r.returncode == 0 and r.stdout: fp = io.BytesIO(r.stdout); break
+        else:
+            return None
     try:  # reduz para 320px para o HTML não ficar pesado
         from PIL import Image
         im = Image.open(fp).convert("RGB"); im.thumbnail((320, 320))
         buf = io.BytesIO(); im.save(buf, "JPEG", quality=78)
         return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
     except ImportError:
-        return f"data:image/{'png' if ext == '.png' else 'jpeg'};base64," + base64.b64encode(fp.read_bytes()).decode()
+        return f"data:image/{'png' if ext == '.png' else 'jpeg'};base64," + base64.b64encode(fp.getvalue() if isinstance(fp, io.BytesIO) else fp.read_bytes()).decode()
+
+def thumbs_conhecidos():
+    """(campanha, anúncio) → imagem: caminho do data.json (buscado no Pages) e, como reserva, a miniatura do relatório anterior."""
+    aqui = Path(__file__).parent; caminhos = {}; antigas = {}
+    try:
+        tabs = json.loads((aqui / "data.json").read_text(encoding="utf-8"))["META_TABLES"]["all"]["all"]["ads"]
+        for a in tabs:
+            if a.get("thumb"): caminhos.setdefault((a["camp"], a["n"]), a["thumb"])
+    except Exception as e:
+        print("  AVISO: data.json sem miniaturas:", e)
+    velho = aqui / "captacoes.html"
+    if velho.exists():
+        m = re.search(r"const D = (\{.*?\});\n", velho.read_text(encoding="utf-8"))
+        if m:
+            for w in json.loads(m.group(1)).get("whats", []):
+                for x in w["anuncios"]:
+                    if x.get("img"):
+                        for c in w["camps"]:
+                            if c.replace("SOBE-", "") == x.get("camp"): antigas[(c, x["nome"])] = x["img"]
+    return caminhos, antigas
+
+def thumb_de_caminho(rel):
+    r = subprocess.run(["curl", "-sfL", f"https://mggastal.github.io/sobe_microkids/{rel}"], capture_output=True)
+    if r.returncode != 0 or not r.stdout: return None
+    from PIL import Image
+    im = Image.open(io.BytesIO(r.stdout)).convert("RGB"); im.thumbnail((320, 320))
+    buf = io.BytesIO(); im.save(buf, "JPEG", quality=78)
+    return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
 
 def build_whats(meta):
     res = []
+    caminhos, antigas = thumbs_conhecidos()
+    def img_do_anuncio(camp, nome, url):
+        rel = caminhos.get((camp, nome))
+        return (thumb_de_caminho(rel) if rel else None) or thumb_data(url) or antigas.get((camp, nome))
     for ex in EXTRA_META:
         mm = meta[meta["Campaign Name"].isin(ex["camps"])].copy()
         if mm.empty: continue
@@ -350,7 +394,7 @@ def build_whats(meta):
                                                           thumb=("Thumbnail URL", "last"), ini=("dt", "min"), fim=("dt", "max")).reset_index()
         anuncios = [{"nome": r["Ad Name"], "camp": r["Campaign Name"].replace("SOBE-", ""), "spend": round(float(r["sp"]), 2),
                      "leads": int(r["ld"]), "imp": int(r["imp"]), "ctr": round(100 * r["lc"] / r["imp"], 2) if r["imp"] else None,
-                     "cpl": round(float(r["sp"]) / r["ld"], 2) if r["ld"] else None, "img": thumb_data(r["thumb"]),
+                     "cpl": round(float(r["sp"]) / r["ld"], 2) if r["ld"] else None, "img": img_do_anuncio(r["Campaign Name"], r["Ad Name"], r["thumb"]),
                      "ini": r["ini"].strftime("%Y-%m-%d"), "fim": r["fim"].strftime("%Y-%m-%d")}
                     for _, r in an.sort_values("sp", ascending=False).iterrows() if r["sp"] > 0]
         res.append({"k": re.sub(r"\W+", "", ex["nome"].lower()), "nome": ex["nome"], "tipo": ex["tipo"], "camps": ex["camps"],
@@ -440,7 +484,7 @@ def build_pnld(leads, web_ini, web_fim):
     mat = esc.groupby(["Estado", "Posição da escolha"])["Total 3º ao 5º"].sum().unstack(fill_value=0)
     mun = esc.groupby("Estado")["Município"].nunique()
     base_uf = leads.drop_duplicates("email")["uf"].value_counts()
-    web = leads[leads["capt"].isin(["w1", "w2", "w3"])].drop_duplicates(["email", "capt"])
+    web = leads[leads["capt"].isin(WEBINARS)].drop_duplicates(["email", "capt"])
     web_uf = web["uf"].value_counts()
     web_capt = web.groupby(["uf", "capt"]).size()
     n_esc = len(esc)
@@ -457,7 +501,7 @@ def build_pnld(leads, web_ini, web_fim):
                     "imp": int(sp_uf["Impressões"].get(uf, 0)), "alcance": int(sp_uf["Alcance"].get(uf, 0)),
                     "cliques": int(sp_uf["Cliques no link"].get(uf, 0)), "leads_base": int(base_uf.get(uf, 0)),
                     "leads_web": int(web_uf.get(uf, 0)),
-                    "leads_w": {k: int(web_capt.get((uf, k), 0)) for k in ["w1", "w2", "w3"]},
+                    "leads_w": {k: int(web_capt.get((uf, k), 0)) for k in WEBINARS},
                     "sh_spend": round(100 * sp / sp_tot, 2), "sh_escolas": round(100 * tot / n_esc, 2),
                     "spend_all": round(float(all_uf["sp"].get(uf, 0)), 2),
                     "sh_spend_all": round(100 * float(all_uf["sp"].get(uf, 0)) / all_tot, 2),
