@@ -202,8 +202,13 @@ def utm_tab(d, col):
         rows.append({"utm": v, "src": f, "value": int(n)})
     return rows
 
+def por_dia(d, ini, fim):
+    """Leads por dia, incluindo os dias sem cadastro."""
+    c = d.groupby(d["Data"].dt.normalize()).size()
+    return [{"date": x.strftime("%Y-%m-%d"), "value": int(c.get(x, 0))} for x in pd.date_range(ini, fim)]
+
 def daily(d, ini, fim):
-    """Leads por semana (seg–dom), padrão em todo o relatório."""
+    """Leads por semana (seg–dom)."""
     wk = d.groupby(d["Data"].dt.to_period("W-SUN")).size()
     per = pd.period_range(ini, fim, freq="W-SUN")
     return "semana", [{"date": p.start_time.strftime("%Y-%m-%d"), "value": int(wk.get(p, 0))} for p in per]
@@ -262,7 +267,7 @@ def build():
             "cpl_plat": round(sp / ld_plat, 2) if ld_plat else None,
             "imp": int(mm["imp"].sum() + gg["imp"].sum()),
             "meta_total": int(len(meta_d)), "google_total": int(len(goog_d)),
-            "diario_gran": gran, "diario": dd,
+            "diario_gran": gran, "diario": dd, "por_dia": por_dia(d_all, ini, fim),
             "profissoes": bars(d["prof"]), "fontes": bars(d["fonte"]),
             "posicionamentos": bars(d["place"]),
             "conjuntos": conj, "google": google,
